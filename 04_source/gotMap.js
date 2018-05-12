@@ -14,8 +14,8 @@ width = canvWidth - margin.left - margin.right;
 
 d3.json("data.json", function(data) {
 
+    //DRAWING HOUSE STARK AREA
     var circleRad = 10;
-
     var starkArea = svg.append('g');
     var starkAreaPadding = 50;
     var starkCellCounter=0;
@@ -32,10 +32,29 @@ d3.json("data.json", function(data) {
     .attr("font-size", "24px")
     .style("text-anchor", "middle");
 
+    //DRAWING HOUSE X AREA
+
 
     var i;
     for(i =0; i<data.characters.length;i++){
       var person = data.characters[i];
+      processStark(person);
+    }
+
+    console.log(data);
+
+
+    function getStarkX(){
+
+      return saXPos + starkCellCounter*starkAreaPadding;
+    }
+
+    function getStarkY(){
+
+        return saYPos+starkAreaPadding/2+starkRowCounter*starkAreaPadding;
+    }
+
+    function processStark(person){
       var isStark = person.faction==='House Stark';
     if(isStark){
       starkCellCounter++;
@@ -53,17 +72,5 @@ d3.json("data.json", function(data) {
     }
     }
 
-    console.log(data);
-
-
-    function getStarkX(){
-      
-      return saXPos + starkCellCounter*starkAreaPadding;
-    }
-
-    function getStarkY(){
-
-        return saYPos+starkAreaPadding/2+starkRowCounter*starkAreaPadding;
-    }
 
 });
