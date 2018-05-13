@@ -123,6 +123,41 @@ d3.json("data.json", function(data) {
     const lessColor='lightskyblue';
     drawLessArea();
 
+    //DRAWING House Tyrell Area
+    const tyreArea= svg.append('g');
+    const tyreAreaPadding = 50;
+    var tyreCellCounter=0;
+    var tyreRowCounter=0;
+    const tyreWidth=100;
+    const tyreHeight=115;
+    const tyreXPos=canvWidth-tyreWidth-20;
+    const tyreYPos=0;
+    const tyreColor='orange';
+    drawTyrellArea();
+
+    //DRAWING House Lannister Area
+    const lannArea= svg.append('g');
+    const lannAreaPadding = 50;
+    var lannCellCounter=0;
+    var lannRowCounter=0;
+    const lannWidth=200;
+    const lannHeight=125;
+    const lannXPos=(canvWidth/2);
+    const lannYPos=0;
+    const lannColor='peru';
+    drawLannisterArea();
+
+    //DRAWING House Martell Area
+    const martArea= svg.append('g');
+    const martAreaPadding = 50;
+    var martCellCounter=0;
+    var martRowCounter=0;
+    const martWidth=170;
+    const martHeight=160;
+    const martXPos=(canvWidth)-(martWidth*2)-15;
+    const martYPos=0;
+    const martColor='deeppink';
+    drawMartellArea();
 
 
 
@@ -138,6 +173,9 @@ d3.json("data.json", function(data) {
       processBaratheon(person);
       processOthers(person);
       processLess(person);
+      processTyrell(person);
+      processLannister(person);
+      processMartell(person);
     }
     console.log(data);
 
@@ -225,6 +263,30 @@ d3.json("data.json", function(data) {
           attr('y',(lessYPos/4)*3).attr("font-family", "sans-serif").attr("font-size", "24px")
           .style("text-anchor", "middle")
           .attr('transform','rotate(270,'+(lessXPos+lessWidth+textPadding)+','+(lessYPos+lessHeight/2)+')');
+    }
+    function drawTyrellArea(){
+      tyreArea.append('rect').attr('width', tyreWidth).attr('height',tyreHeight).attr('x',tyreXPos).attr('y',tyreYPos).
+          style('fill','none').style('stroke',tyreColor).style('stroke-width',strokeWidth);
+
+      tyreArea.append('text').text('House Tyrell').attr('x',tyreXPos + (tyreWidth/2))
+          .attr('y',tyreYPos + tyreHeight+textPadding).attr("font-family", "sans-serif").attr("font-size", "24px")
+          .style("text-anchor", "middle");
+    }
+    function drawLannisterArea(){
+      lannArea.append('rect').attr('width', lannWidth).attr('height',lannHeight).attr('x',lannXPos).attr('y',lannYPos).
+          style('fill','none').style('stroke',lannColor).style('stroke-width',strokeWidth);
+
+      lannArea.append('text').text('House Lannister').attr('x',lannXPos + (lannWidth/2))
+          .attr('y',lannYPos + lannHeight+textPadding).attr("font-family", "sans-serif").attr("font-size", "24px")
+          .style("text-anchor", "middle");
+    }
+    function drawMartellArea(){
+      martArea.append('rect').attr('width', martWidth).attr('height',martHeight).attr('x',martXPos).attr('y',martYPos).
+          style('fill','none').style('stroke',martColor).style('stroke-width',strokeWidth);
+
+      martArea.append('text').text('House Martell').attr('x',martXPos + (martWidth/2))
+          .attr('y',martYPos + martHeight+textPadding).attr("font-family", "sans-serif").attr("font-size", "24px")
+          .style("text-anchor", "middle");
     }
 
 
@@ -367,6 +429,57 @@ d3.json("data.json", function(data) {
       }
     }
 
+    function processTyrell(person){
+      var isTyre = person.faction==='House Tyrell';
+      if(isTyre){
+        tyreCellCounter++;
+        var persX=getTyreX();
+        var persY=getTyreY();
+        data.characters[i].xCord=persX;
+        data.characters[i].yCord=persY;
+        drawPersonCircle(tyreArea,persX,persY,tyreColor,person.name);
+
+        if(tyreCellCounter==2){
+          tyreCellCounter=0;
+          tyreRowCounter++;
+        }
+      }
+    }
+
+    function processLannister(person){
+      var isLann = person.faction==='House Lannister';
+      if(isLann){
+        lannCellCounter++;
+        var persX=getLannX();
+        var persY=getLannY();
+        data.characters[i].xCord=persX;
+        data.characters[i].yCord=persY;
+        drawPersonCircle(lannArea,persX,persY,lannColor,person.name);
+
+        if(lannCellCounter==4){
+          lannCellCounter=0;
+          lannRowCounter++;
+        }
+      }
+    }
+
+    function processMartell(person){
+      var isMart = person.faction==='House Martell';
+      if(isMart){
+        martCellCounter++;
+        var persX=getMartX();
+        var persY=getMartY();
+        data.characters[i].xCord=persX;
+        data.characters[i].yCord=persY;
+        drawPersonCircle(martArea,persX,persY,martColor,person.name);
+
+        if(martCellCounter==3){
+          martCellCounter=0;
+          martRowCounter++;
+        }
+      }
+    }
+
     //DRAWING a circle for a person/Character
     function drawPersonCircle(area,x,y,color,name){
       area.append('circle').attr('r',circleRad).attr('cx',x).attr('cy',y)
@@ -434,6 +547,27 @@ d3.json("data.json", function(data) {
     }
     function getLessY(){
       return lessYPos+lessAreaPadding/2+lessRowCounter*lessAreaPadding;
+    }
+    function getTyreX(){
+      if(tyreCellCounter==1)return tyreXPos+28;
+      else return tyreXPos + tyreCellCounter*tyreAreaPadding-22;
+    }
+    function getTyreY(){
+      return 8+(tyreYPos+tyreAreaPadding/2+tyreRowCounter*tyreAreaPadding);
+    }
+    function getLannX(){
+      if(lannCellCounter==1)return lannXPos+28;
+      else return lannXPos + lannCellCounter*lannAreaPadding-22;
+    }
+    function getLannY(){
+      return 8+(lannYPos+lannAreaPadding/2+lannRowCounter*lannAreaPadding);
+    }
+    function getMartX(){
+      if(martCellCounter==1)return martXPos+28;
+      else return martXPos + martCellCounter*martAreaPadding-22;
+    }
+    function getMartY(){
+      return 8+(martYPos+martAreaPadding/2+martRowCounter*martAreaPadding);
     }
 
 });
