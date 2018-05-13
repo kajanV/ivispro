@@ -80,7 +80,7 @@ d3.json("data.json", function(data) {
     var gjRowCounter=0;
     const gjWidth=150;
     const gjHeight=75;
-    const gjXPos=300;
+    const gjXPos=235;
     const gjYPos=canvHeight-gjHeight;
     const gjColor='darkolivegreen';
     drawGreyjoyArea();
@@ -99,6 +99,31 @@ d3.json("data.json", function(data) {
     drawBaratheonArea();
 
 
+    //DRAWING Others Area
+    const othersArea=svg.append('g');
+    const othersAreaPadding=50;
+    var othersCellCounter=0;
+    var othersRowCounter=0;
+    const othersWidth=610;
+    const othersHeight=150;
+    const othersXPos=canvWidth/2-othersWidth/4;
+    const othersYPos=canvHeight-othersHeight;
+    const othersColor='purple';
+    drawOthersArea();
+
+    //DRAWING Lesser House Area
+    const lessArea = svg.append('g');
+    const lessAreaPadding = 50;
+    var lessCellCounter=0;
+    var lessRowCounter=0;
+    const lessWidth=100;
+    const lessHeight=200;
+    const lessXPos = canvWidth-lessWidth;
+    const lessYPos = canvHeight/2-(lessHeight/2);
+    const lessColor='lightskyblue';
+    drawLessArea();
+
+
 
 
     //Loop through hole dataset and draw accordingly
@@ -111,6 +136,8 @@ d3.json("data.json", function(data) {
       processFreeFolk(person);
       processGreyjoy(person);
       processBaratheon(person);
+      processOthers(person);
+      processLess(person);
     }
     console.log(data);
 
@@ -180,6 +207,24 @@ d3.json("data.json", function(data) {
       baraArea.append('text').text('House Baratheon').attr('x',baraXPos + baraWidth/2)
       .attr('y',baraYPos + baraHeight+textPadding).attr("font-family", "sans-serif").attr("font-size", "24px")
       .style("text-anchor", "middle");
+    }
+    function drawOthersArea(){
+      othersArea.append('rect').attr('width',othersWidth).attr('height',othersHeight)
+      .attr('x',othersXPos).attr('y',othersYPos).style('fill','none').style('stroke',othersColor)
+      .style('stroke-width',strokeWidth);
+
+      othersArea.append('text').text('Others').attr('x',othersXPos + othersWidth/2)
+      .attr('y',othersYPos-(textPadding/2)).attr("font-family", "sans-serif").attr("font-size", "24px")
+      .style("text-anchor", "middle");
+    }
+    function drawLessArea(){
+      lessArea.append('rect').attr('width', lessWidth).attr('height',lessHeight).attr('x',lessXPos).attr('y',lessYPos).
+          style('fill','none').style('stroke',lessColor).style('stroke-width',strokeWidth);
+
+        lessArea.append('text').text('Lesser Houses').attr('x',lessXPos+lessWidth+textPadding).
+          attr('y',(lessYPos/4)*3).attr("font-family", "sans-serif").attr("font-size", "24px")
+          .style("text-anchor", "middle")
+          .attr('transform','rotate(270,'+(lessXPos+lessWidth+textPadding)+','+(lessYPos+lessHeight/2)+')');
     }
 
 
@@ -288,6 +333,40 @@ d3.json("data.json", function(data) {
       }
     }
 
+    function processOthers(person){
+      var isOthers = person.faction==='Others';
+      if(isOthers){
+        othersCellCounter++;
+        var persX=getOthersX();
+        var persY=getOthersY();
+        data.characters[i].xCord=persX;
+        data.characters[i].yCord=persY;
+        drawPersonCircle(othersArea,persX,persY,othersColor,person.name);
+
+        if(othersCellCounter==12){
+          othersCellCounter=0;
+          othersRowCounter++;
+        }
+      }
+    }
+
+    function processLess(person){
+      var isLess = person.faction==='Lesser Houses';
+      if(isLess){
+        lessCellCounter++;
+        var persX=getLessX();
+        var persY=getLessY();
+        data.characters[i].xCord=persX;
+        data.characters[i].yCord=persY;
+        drawPersonCircle(lessArea,persX,persY,lessColor,person.name);
+
+        if(lessCellCounter==2){
+          lessCellCounter=0;
+          lessRowCounter++;
+        }
+      }
+    }
+
     //DRAWING a circle for a person/Character
     function drawPersonCircle(area,x,y,color,name){
       area.append('circle').attr('r',circleRad).attr('cx',x).attr('cy',y)
@@ -341,6 +420,20 @@ d3.json("data.json", function(data) {
     }
     function getBaraY(){
       return 8+(baraYPos+baraAreaPadding/2+baraRowCounter*baraAreaPadding);
+    }
+    function getOthersX(){
+      if(othersCellCounter==1)return othersXPos+28;
+      else return othersXPos + othersCellCounter*othersAreaPadding-22;
+    }
+    function getOthersY(){
+      return 8+(othersYPos+othersAreaPadding/2+othersRowCounter*othersAreaPadding);
+    }
+    function getLessX(){
+      if(nwCellCounter==1)return 28;
+      else return lessXPos + lessCellCounter*lessAreaPadding-22;
+    }
+    function getLessY(){
+      return lessYPos+lessAreaPadding/2+lessRowCounter*lessAreaPadding;
     }
 
 });
