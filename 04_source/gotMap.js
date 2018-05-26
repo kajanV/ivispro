@@ -242,7 +242,11 @@ d3.json("data.json", function (data) {
     .attr("fill", "red");*/
 
   slider.on('change', function (d, index) {
-    console.log(this.value);
+    console.log('slider info: ');
+    console.log('value: ' + this.value);
+    var epString = epNrToString(this.value);
+    console.log('ep string: ' + epString);
+    console.log('ep nr: '+epStringToNr(epString));
   });
 
 
@@ -820,12 +824,81 @@ d3.json("data.json", function (data) {
   }
 
 
+  function epNrToString(epNr){
+      var result;
+      var epRes = 0;
+
+
+      if(epNr>=1 && epNr <=10){
+        result = "s01";
+        epRes = epNr;
+      }else if(epNr>10 && epNr<=20){
+        result = "s02";
+        epRes = epNr-10;
+      }else if(epNr>20 && epNr<=30){
+        result = "s03";
+        epRes = epNr-20;
+      }else if(epNr>30&&epNr<=40){
+        result = "s04";
+        epRes = epNr-30;
+      }else if(epNr>40&&epNr<=50){
+        result = "s05";
+        epRes = epNr-40;
+      }else if(epNr>50&&epNr<=60){
+        result ="s06";
+        epRes = epNr-50;
+      }else if(epNr==0){
+        result = "s01e01";
+      }
+
+        result += 'e';
+        if(epRes<10)result+='0';
+        result+=String(epRes);
+
+
+      return result;
+  }
+
+  function epStringToNr(epStr){
+      var result=0;
+      
+      if(epStr=='s00e00')return 1;
+
+      var strParts = epStr.split('e');
+
+      if(strParts[0]=='s01'){
+        result = Number(strParts[1]);
+      }else if(strParts[0]=='s02'){
+        result = 10 + Number(strParts[1]);
+      }else if(strParts[0]=='s03'){
+        result = 20 + Number(strParts[1]);
+      }else if(strParts[0]=='s04'){
+        result = 30 + Number(strParts[1]);
+      }else if(strParts[0]=='s05'){
+        result = 40 + Number(strParts[1]);
+      }else if(strParts[0]=='s06'){
+        result = 50 + Number(strParts[1]);
+      }
+      return result;
+  }
+
+
+
+
+
+
+
+
   d3.select('#area1').append('button').text('clear relations').on('click', function (d, i) {
     hideRelations();
   });
   d3.select('#area1').append('button').text('draw all relations').on('click', function (d, i) {
     showRelations();
   });
+
+
+
+
 });
 
 
