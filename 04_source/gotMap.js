@@ -188,7 +188,6 @@ d3.json("data.json", function (data) {
   var i;
   for (i = 0; i < data.characters.length; i++) {
     var person = data.characters[i];
-    charList.push(person);
     processStark(person);
     processNightsWatch(person);
     processTargaryen(person);
@@ -200,7 +199,9 @@ d3.json("data.json", function (data) {
     processTyrell(person);
     processLannister(person);
     processMartell(person);
-
+    charList.push(person);
+     }
+  for(i=0;i<data.characters.length;i++){
     drawRelations(i);
   }
   //var relList = getRelationsFor(data.characters[0]);
@@ -702,8 +703,6 @@ d3.json("data.json", function (data) {
 
   function drawRelations(personIndex) {
     var person = data.characters[personIndex];
-    //var person = charList[x];
-    //currentRelations = getRelationsFor(person);
 
     var srcX = person.xCord;
     var srcY = person.yCord;
@@ -714,6 +713,10 @@ d3.json("data.json", function (data) {
 
         var targetName = relations[x].target;
         var target = getPerson(targetName);
+
+        if(typeof(target)!='undefined'){
+
+       
         var tarX = target.xCord;
         var tarY = target.yCord;
 
@@ -756,7 +759,7 @@ d3.json("data.json", function (data) {
         relLineList.push(relLine);
 
 
-
+      }
       }
     }
 
