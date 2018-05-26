@@ -1,6 +1,3 @@
-
-//THOUGHT: Relations exist to non listed characters, maybe joker char needed
-
 // create svg canvas
 const canvHeight = 600, canvWidth = 1245;
 const svg = d3.select("body").append("svg")
@@ -14,6 +11,40 @@ const svg = d3.select("body").append("svg")
 const margin = { top: 50, right: 20, bottom: 30, left: 60 };
 height = canvHeight - margin.top - margin.bottom;
 width = canvWidth - margin.left - margin.right;
+
+//Draw sub-Map Areas (slider and infobox)
+const area1 = d3.select('body').append('div').attr('id', 'area1').attr('class', 'area');
+
+
+const area2 = d3.select('body').append('div').attr('id', 'area2').attr('class', 'area');
+
+var slider = area2.append('input')
+  .attr('type', 'range')
+  .attr('min', '1')
+  .attr('max', '50')
+  .attr('class', 'slider')
+  .attr('id', 'myRange')
+  .attr('step', '1.0')
+  .attr('value', '1');
+
+
+
+const area2Height = 200, area2Width = 200;
+const area3 = d3.select('body').append('div').attr('id', 'area3').attr('class', 'area');
+const svg2 = area3
+  .append("svg")
+  .attr("width", area2Width)
+  .attr("height", area2Height)
+  .style("border", "1px solid black")
+  .style('background-color', 'aliceblue');
+
+var epLabel = svg2.append('text').text('s01e01').attr("font-family", "sans-serif")
+  .attr("font-size", "24px").style('fill', 'black').style("text-anchor", "start")
+  .attr('x', '20').attr('y', '30%');
+
+
+
+var currentEP = 's01e01';
 
 
 
@@ -200,38 +231,19 @@ d3.json("data.json", function (data) {
     processLannister(person);
     processMartell(person);
     charList.push(person);
-     }
-  for(i=0;i<data.characters.length;i++){
+  }
+  for (i = 0; i < data.characters.length; i++) {
     drawRelations(i);
   }
   //var relList = getRelationsFor(data.characters[0]);
 
 
   console.log(data);
-  console.log(charList);
+  console.log(charCircles);
 
 
 
-  //Draw sub-Map Areas (slider and infobox)
-  const area2Height = 200, area2Width = 200;
-  const svg2 = d3.select("#area3")
-    .append("svg")
-    .attr("width", area2Width)
-    .attr("height", area2Height)
-    .style("border", "1px solid black")
-    .style('background-color', 'aliceblue');
 
-
-  var area2 = d3.select('#area2');
-
-  var slider = area2.append('input')
-    .attr('type', 'range')
-    .attr('min', '1')
-    .attr('max', '68')
-    .attr('class', 'slider')
-    .attr('id', 'myRange')
-    .attr('step', '1.0')
-    .attr('value', '1');
 
   /*area2.append('Text')
     .attr("x", 20)
@@ -241,13 +253,7 @@ d3.json("data.json", function (data) {
     .attr("font-size", "20px")
     .attr("fill", "red");*/
 
-  slider.on('change', function (d, index) {
-    console.log('slider info: ');
-    console.log('value: ' + this.value);
-    var epString = epNrToString(this.value);
-    console.log('ep string: ' + epString);
-    console.log('ep nr: '+epStringToNr(epString));
-  });
+
 
 
 
@@ -570,7 +576,13 @@ d3.json("data.json", function (data) {
 
         var isActive = false;
         for (var x = 0; x < activeRelCircleList.length; x++) {
-          if (activeRelCircleList[x] == this) isActive = true;
+          if (activeRelCircleList[x] === this){
+            isActive = true;
+          } else if(typeof(activeRelCircleList[x]._groups)!='undefined'){
+            if(activeRelCircleList[x]._groups[0][0] ===this){
+              isActive=true;
+            }
+          }
         }
 
         if (!isActive) {
@@ -580,16 +592,22 @@ d3.json("data.json", function (data) {
         else {
           hideRelationsFor(idParts[0]);
           for (var x = 0; x < activeRelCircleList.length; x++) {
-            if (activeRelCircleList[x] == this) activeRelCircleList.splice(x, 1);
+            if (activeRelCircleList[x] === this){
+              activeRelCircleList.splice(x, 1);
+            } else if(typeof(activeRelCircleList[x]._groups)!='undefined'){
+              if(activeRelCircleList[x]._groups[0][0]===this)
+              activeRelCircleList.splice(x,1);
+            }
           }
 
         }
-        charCircles.push(c);
+        
         console.log('circle clicked');
 
       });
+      charCircles.push(c);
 
-
+      
   }
 
   //Generating koordinates for next person from according houses
@@ -718,52 +736,54 @@ d3.json("data.json", function (data) {
         var targetName = relations[x].target;
         var target = getPerson(targetName);
 
-        if(typeof(target)!='undefined'){
-
-       
-        var tarX = target.xCord;
-        var tarY = target.yCord;
+        if (typeof (target) != 'undefined') {
 
 
+          var tarX = target.xCord;
+          var tarY = target.yCord;
 
-        var color = 'black';
-        var relType = relations[x].type;
 
-        if (relType === 'is allied with') {
-          color = 'blue';
-        } else if (relType === 'is child of') {
-          color = 'aqua';
-        } else if (relType === 'is enemy of') {
-          color = 'red'
-        } else if (relType === 'is in love with') {
-          color = 'pink';
-        } else if (relType === 'is married to') {
-          color = 'darkgoldenrod';
-        } else if (relType === 'is parent of') {
-          color = 'darkcyan';
-        } else if (relType === 'is sibling of') {
-          color = 'forestgreen';
-        } else if (relType === 'killed') {
-          color = 'darkviolet';
-        } else if (relType === 'was killed by') {
-          color = 'darkslateblue';
-        } else if (relType === 'was severely injured by') {
-          color = 'lightsalmon';
+
+          var color = 'black';
+          var relType = relations[x].type;
+
+          if (relType === 'is allied with') {
+            color = 'blue';
+          } else if (relType === 'is child of') {
+            color = 'aqua';
+          } else if (relType === 'is enemy of') {
+            color = 'red'
+          } else if (relType === 'is in love with') {
+            color = 'pink';
+          } else if (relType === 'is married to') {
+            color = 'darkgoldenrod';
+          } else if (relType === 'is parent of') {
+            color = 'darkcyan';
+          } else if (relType === 'is sibling of') {
+            color = 'forestgreen';
+          } else if (relType === 'killed') {
+            color = 'darkviolet';
+          } else if (relType === 'was killed by') {
+            color = 'darkslateblue';
+          } else if (relType === 'was severely injured by') {
+            color = 'lightsalmon';
+          }
+
+          var relLine = svg.append('line').attr('x1', srcX).attr('y1', srcY)
+            .attr('x2', tarX).attr('y2', tarY).attr('stroke-width', 2).attr('stroke', color)
+            .attr('data-src', person.name)
+            .attr('data-target', targetName)
+            .attr('data-rel-start', relations[x].start)
+            .attr('data-rel-end', relations[x].end)
+            .style('visibility', 'hidden')
+            .on('click', function (d, index) {
+
+            });
+
+          relLineList.push(relLine);
+
+
         }
-
-        var relLine = svg.append('line').attr('x1', srcX).attr('y1', srcY)
-          .attr('x2', tarX).attr('y2', tarY).attr('stroke-width', 2).attr('stroke', color)
-          .attr('data-src', person.name)
-          .attr('data-target', targetName)
-          .style('visibility', 'hidden')
-          .on('click', function (d, index) {
-
-          });
-
-        relLineList.push(relLine);
-
-
-      }
       }
     }
 
@@ -774,15 +794,21 @@ d3.json("data.json", function (data) {
 
   function showRelationsFor(name) {
     for (var x = 0; x < relLineList.length; x++) {
-      //  console.log(relLineList[x]);
-      // console.log(relLineList[x]._groups[0][0]);
-      //console.log(relLineList[x]._groups[0][0].getAttribute('data-src'));
-      // console.log(relLineList[x].attr("attributes"));
+
       var relSource = relLineList[x]._groups[0][0].getAttribute('data-src');
       if (relSource === name) {
-        //relLineList[x]._groups[0][0].style('visibility','visible');
-        relLineList[x]._groups[0][0].style.visibility = 'visible';
-        // relLineList[x].style('visibility','visible');
+
+        var relStart = relLineList[x]._groups[0][0].getAttribute('data-rel-start');
+        var relEnd = relLineList[x]._groups[0][0].getAttribute('data-rel-end');
+
+        var relStartNr = epStringToNr(relStart);
+        var relEndNr = epStringToNr(relEnd);
+        var currentNr = epStringToNr(currentEP);
+
+        if (currentNr <= relEndNr && currentNr >= relStartNr) {
+          relLineList[x]._groups[0][0].style.visibility = 'visible';
+        }
+
       }
     }
   }
@@ -808,7 +834,7 @@ d3.json("data.json", function (data) {
     }
     activeRelCircleList = [];
 
-    console.log("background clicked. Relations cleaned.");
+    console.log("Relations cleaned.");
 
   };
 
@@ -816,84 +842,144 @@ d3.json("data.json", function (data) {
     activeRelCircleList = [];
     for (var x = 0; x < relLineList.length; x++) {
 
-      relLineList[x]._groups[0][0].style.visibility = 'visible';
+      var relStart = relLineList[x]._groups[0][0].getAttribute('data-rel-start');
+      var relEnd = relLineList[x]._groups[0][0].getAttribute('data-rel-end');
 
+      var relStartNr = epStringToNr(relStart);
+      var relEndNr = epStringToNr(relEnd);
+      var currentNr = epStringToNr(currentEP);
+
+      if (currentNr <= relEndNr && currentNr >= relStartNr) {
+        relLineList[x]._groups[0][0].style.visibility = 'visible';
+      }
 
     }
-    activeRelCircleList = charCircles.splice(0);
+    activeRelCircleList = charCircles.slice(0);
+    
   }
+  
+  //THOUGHT: differ between click adds and full ads (so activeRel... or activeRel.._groups)
+  function updateRelations(){
+    prepRelUpdate();
+    for(var x =0; x<activeRelCircleList.length;x++){
+      for(var y =0;y<relLineList.length;y++){
+        var relLine = relLineList[y]._groups[0][0];
+        var activePers;
+        if(typeof(activeRelCircleList[x]._groups)!='undefined'){
+          activePers=activeRelCircleList[x]._groups[0][0];
+        }else{
+          activePers=activeRelCircleList[x];
+        }
+        
+        var relSrc = relLine.getAttribute('data-src');
+        var idComps = activePers.getAttribute('id').split('_');
+        var name = idComps[0];
+
+        if(relSrc===name){
+
+          var relStart = relLine.getAttribute('data-rel-start');
+          var relEnd = relLine.getAttribute('data-rel-end');
+    
+          var relStartNr = epStringToNr(relStart);
+          var relEndNr = epStringToNr(relEnd);
+          var currentNr = epStringToNr(currentEP);
+
+          if (currentNr <= relEndNr && currentNr >= relStartNr) {
+           // relLineList[y]._groups[0][0].style.visibility = 'visible';
+           relLine.style.visibility='visible';
+          }
+
+        }
 
 
-  function epNrToString(epNr){
-      var result;
-      var epRes = 0;
-
-
-      if(epNr>=1 && epNr <=10){
-        result = "s01";
-        epRes = epNr;
-      }else if(epNr>10 && epNr<=20){
-        result = "s02";
-        epRes = epNr-10;
-      }else if(epNr>20 && epNr<=30){
-        result = "s03";
-        epRes = epNr-20;
-      }else if(epNr>30&&epNr<=40){
-        result = "s04";
-        epRes = epNr-30;
-      }else if(epNr>40&&epNr<=50){
-        result = "s05";
-        epRes = epNr-40;
-      }else if(epNr>50&&epNr<=60){
-        result ="s06";
-        epRes = epNr-50;
-      }else if(epNr==0){
-        result = "s01e01";
       }
-
-        result += 'e';
-        if(epRes<10)result+='0';
-        result+=String(epRes);
+    }
 
 
-      return result;
   }
 
-  function epStringToNr(epStr){
-      var result=0;
-      
-      if(epStr=='s00e00')return 1;
-
-      var strParts = epStr.split('e');
-
-      if(strParts[0]=='s01'){
-        result = Number(strParts[1]);
-      }else if(strParts[0]=='s02'){
-        result = 10 + Number(strParts[1]);
-      }else if(strParts[0]=='s03'){
-        result = 20 + Number(strParts[1]);
-      }else if(strParts[0]=='s04'){
-        result = 30 + Number(strParts[1]);
-      }else if(strParts[0]=='s05'){
-        result = 40 + Number(strParts[1]);
-      }else if(strParts[0]=='s06'){
-        result = 50 + Number(strParts[1]);
-      }
-      return result;
+  function prepRelUpdate(){
+    for(var x =0; x < relLineList.length;x++){
+      relLineList[x]._groups[0][0].style.visibility='hidden';
+    }
   }
 
 
+  function epNrToString(epNr) {
+    var result;
+    var epRes = 0;
 
 
+    if (epNr >= 1 && epNr <= 10) {
+      result = "s01";
+      epRes = epNr;
+    } else if (epNr > 10 && epNr <= 20) {
+      result = "s02";
+      epRes = epNr - 10;
+    } else if (epNr > 20 && epNr <= 30) {
+      result = "s03";
+      epRes = epNr - 20;
+    } else if (epNr > 30 && epNr <= 40) {
+      result = "s04";
+      epRes = epNr - 30;
+    } else if (epNr > 40 && epNr <= 50) {
+      result = "s05";
+      epRes = epNr - 40;
+    } else if (epNr == 0) {
+      result = "s01e01";
+    }
+
+    result += 'e';
+    if (epRes < 10) result += '0';
+    result += String(epRes);
 
 
+    return result;
+  }
+
+  function epStringToNr(epStr) {
+    var result = 0;
+
+    if (epStr == 's00e00') return 1;
+    if (epStr == null) return Number.MAX_VALUE;
+
+    var strParts = epStr.split('e');
+
+    if (strParts[0] == 's01') {
+      result = Number(strParts[1]);
+    } else if (strParts[0] == 's02') {
+      result = 10 + Number(strParts[1]);
+    } else if (strParts[0] == 's03') {
+      result = 20 + Number(strParts[1]);
+    } else if (strParts[0] == 's04') {
+      result = 30 + Number(strParts[1]);
+    } else if (strParts[0] == 's05') {
+      result = 40 + Number(strParts[1]);
+    }
+    return result;
+  }
+
+  //EVENT Handlers for additional controls in sub areas
 
 
-  d3.select('#area1').append('button').text('clear relations').on('click', function (d, i) {
+  slider.on('change', function (d, index) {
+    console.log('slider info: ');
+    console.log('value: ' + this.value);
+    var epString = epNrToString(this.value);
+    console.log('ep string: ' + epString);
+    console.log('ep nr: ' + epStringToNr(epString));
+
+    epLabel.text(epString);
+    currentEP = epString;
+    updateRelations();
+  });
+
+  area1.append('button').text('clear relations').on('click', function (d, i) {
     hideRelations();
   });
-  d3.select('#area1').append('button').text('draw all relations').on('click', function (d, i) {
+  area1.append('button').text('draw all relations').on('click', function (d, i) {
     showRelations();
+    
   });
 
 
