@@ -44,9 +44,9 @@ var epLabel = svg2.append('text').text('s01e01').attr("font-family", "sans-serif
 
 
 
-var toolTip = d3.select('body').append('div').attr('id','tooltip').style('left',100+'px').style('top',100+'px');
+var toolTip = d3.select('body').append('div').attr('id', 'tooltip').style('left', 100 + 'px').style('top', 100 + 'px');
 var toolTipText = toolTip.append('p').text('NA');
-toolTip.classed('hidden',true);
+toolTip.classed('hidden', true);
 
 
 
@@ -224,7 +224,7 @@ d3.json("data.json", function (data) {
 
 
 
-  //Loop through hole dataset and draw accordingly
+  //Loop through characters and draw according circles
   var i;
   for (i = 0; i < data.characters.length; i++) {
     var person = data.characters[i];
@@ -241,30 +241,16 @@ d3.json("data.json", function (data) {
     processMartell(person);
     charList.push(person);
   }
+
+  //Predraw all relations
   for (i = 0; i < data.characters.length; i++) {
     drawRelations(i);
   }
-  //var relList = getRelationsFor(data.characters[0]);
+
 
 
   console.log(data);
   console.log(charCircles);
-
-
-
-
-
-  /*area2.append('Text')
-    .attr("x", 20)
-    .attr("y", 20)
-    .text("(")
-    .attr("font-family", "sans-serif")
-    .attr("font-size", "20px")
-    .attr("fill", "red");*/
-
-
-
-
 
 
 
@@ -577,68 +563,68 @@ d3.json("data.json", function (data) {
       killEP = "NA"
     }
     var c = area.append('circle').attr('r', circleRad).attr('cx', x).attr('cy', y)
-    .attr('fill', color).attr('id', name + '_' + i).attr('data-killed', killEP)
-    .attr('data-first', first);
+      .attr('fill', color).attr('id', name + '_' + i).attr('data-killed', killEP)
+      .attr('data-first', first);
 
     //ADD Eventhandlers for the circles events
 
-      c.on('click', function (d, index) {
+    c.on('click', function (d, index) {
 
-        var componentId = this.id;
-        var idParts = componentId.split("_");
+      var componentId = this.id;
+      var idParts = componentId.split("_");
 
-        var isActive = false;
-        for (var x = 0; x < activeRelCircleList.length; x++) {
-          if (activeRelCircleList[x] === this){
+      var isActive = false;
+      for (var x = 0; x < activeRelCircleList.length; x++) {
+        if (activeRelCircleList[x] === this) {
+          isActive = true;
+        } else if (typeof (activeRelCircleList[x]._groups) != 'undefined') {
+          if (activeRelCircleList[x]._groups[0][0] === this) {
             isActive = true;
-          } else if(typeof(activeRelCircleList[x]._groups)!='undefined'){
-            if(activeRelCircleList[x]._groups[0][0] ===this){
-              isActive=true;
-            }
           }
         }
+      }
 
-        if (!isActive) {
-          showRelationsFor(idParts[0]);
-          activeRelCircleList.push(this);
-        }
-        else {
-          hideRelationsFor(idParts[0]);
-          for (var x = 0; x < activeRelCircleList.length; x++) {
-            if (activeRelCircleList[x] === this){
+      if (!isActive) {
+        showRelationsFor(idParts[0]);
+        activeRelCircleList.push(this);
+      }
+      else {
+        hideRelationsFor(idParts[0]);
+        for (var x = 0; x < activeRelCircleList.length; x++) {
+          if (activeRelCircleList[x] === this) {
+            activeRelCircleList.splice(x, 1);
+          } else if (typeof (activeRelCircleList[x]._groups) != 'undefined') {
+            if (activeRelCircleList[x]._groups[0][0] === this)
               activeRelCircleList.splice(x, 1);
-            } else if(typeof(activeRelCircleList[x]._groups)!='undefined'){
-              if(activeRelCircleList[x]._groups[0][0]===this)
-              activeRelCircleList.splice(x,1);
-            }
           }
-
         }
-        
-        console.log('circle clicked');
 
-      });
+      }
 
+      console.log('circle clicked');
 
-      c.on('mouseover',function(d,index){
-          toolTip.style('left',x+'px').style('top',(y+22)+'px');
-          var charID = this.getAttribute('id');
-          var idComps = charID.split('_');
-          var name = idComps[0];
-          toolTipText.text(name);
-          toolTip.classed('hidden',false);
-      });
+    });
 
 
-      c.on('mouseout',function(d,index){
-        toolTip.classed('hidden',true);
-      });
+    c.on('mouseover', function (d, index) {
+      toolTip.style('left', x + 'px').style('top', (y + 22) + 'px');
+      var charID = this.getAttribute('id');
+      var idComps = charID.split('_');
+      var name = idComps[0];
+      toolTipText.text(name);
+      toolTip.classed('hidden', false);
+    });
+
+
+    c.on('mouseout', function (d, index) {
+      toolTip.classed('hidden', true);
+    });
 
 
 
-      charCircles.push(c);
+    charCircles.push(c);
 
-      
+
   }
 
   //Generating koordinates for next person from according houses
@@ -727,17 +713,18 @@ d3.json("data.json", function (data) {
 
 
 
-  //FUNCTIONS regarding relations
-  function getRelations() {
-    return data.relations;
-  }
-
-
+  //Get a person object by name
   function getPerson(name) {
     for (var x = 0; x < data.characters.length; x++) {
       if (data.characters[x].name === name) return data.characters[x];
     }
   }
+
+  //FUNCTIONS regarding relations
+  function getRelations() {
+    return data.relations;
+  }
+
 
   function getRelationsFor(person) {
 
@@ -886,38 +873,37 @@ d3.json("data.json", function (data) {
 
     }
     activeRelCircleList = charCircles.slice(0);
-    
+
   }
-  
-  //THOUGHT: differ between click adds and full ads (so activeRel... or activeRel.._groups)
-  function updateRelations(){
+
+  function updateRelations() {
     prepRelUpdate();
-    for(var x =0; x<activeRelCircleList.length;x++){
-      for(var y =0;y<relLineList.length;y++){
+    for (var x = 0; x < activeRelCircleList.length; x++) {
+      for (var y = 0; y < relLineList.length; y++) {
         var relLine = relLineList[y]._groups[0][0];
         var activePers;
-        if(typeof(activeRelCircleList[x]._groups)!='undefined'){
-          activePers=activeRelCircleList[x]._groups[0][0];
-        }else{
-          activePers=activeRelCircleList[x];
+        if (typeof (activeRelCircleList[x]._groups) != 'undefined') {
+          activePers = activeRelCircleList[x]._groups[0][0];
+        } else {
+          activePers = activeRelCircleList[x];
         }
-        
+
         var relSrc = relLine.getAttribute('data-src');
         var idComps = activePers.getAttribute('id').split('_');
         var name = idComps[0];
 
-        if(relSrc===name){
+        if (relSrc === name) {
 
           var relStart = relLine.getAttribute('data-rel-start');
           var relEnd = relLine.getAttribute('data-rel-end');
-    
+
           var relStartNr = epStringToNr(relStart);
           var relEndNr = epStringToNr(relEnd);
           var currentNr = epStringToNr(currentEP);
 
           if (currentNr <= relEndNr && currentNr >= relStartNr) {
-           // relLineList[y]._groups[0][0].style.visibility = 'visible';
-           relLine.style.visibility='visible';
+            // relLineList[y]._groups[0][0].style.visibility = 'visible';
+            relLine.style.visibility = 'visible';
           }
 
         }
@@ -929,13 +915,14 @@ d3.json("data.json", function (data) {
 
   }
 
-  function prepRelUpdate(){
-    for(var x =0; x < relLineList.length;x++){
-      relLineList[x]._groups[0][0].style.visibility='hidden';
+  function prepRelUpdate() {
+    for (var x = 0; x < relLineList.length; x++) {
+      relLineList[x]._groups[0][0].style.visibility = 'hidden';
     }
   }
 
 
+  //functions to get the episode string e.g s01e02 from it's number and vice versa
   function epNrToString(epNr) {
     var result;
     var epRes = 0;
@@ -990,9 +977,8 @@ d3.json("data.json", function (data) {
     return result;
   }
 
-  //EVENT Handlers for additional controls in sub areas
 
-
+  //Event Handlers for additional controls in sub areas
   slider.on('change', function (d, index) {
     console.log('slider info: ');
     console.log('value: ' + this.value);
@@ -1010,7 +996,7 @@ d3.json("data.json", function (data) {
   });
   area1.append('button').text('draw all relations').on('click', function (d, i) {
     showRelations();
-    
+
   });
 
 
