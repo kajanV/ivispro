@@ -246,6 +246,7 @@ d3.json("data.json", function (data) {
   for (i = 0; i < data.characters.length; i++) {
     drawRelations(i);
   }
+  checkDeaths();
 
 
 
@@ -569,40 +570,7 @@ d3.json("data.json", function (data) {
     //ADD Eventhandlers for the circles events
 
     c.on('click', function (d, index) {
-
-      var componentId = this.id;
-      var idParts = componentId.split("_");
-
-      var isActive = false;
-      for (var x = 0; x < activeRelCircleList.length; x++) {
-        if (activeRelCircleList[x] === this) {
-          isActive = true;
-        } else if (typeof (activeRelCircleList[x]._groups) != 'undefined') {
-          if (activeRelCircleList[x]._groups[0][0] === this) {
-            isActive = true;
-          }
-        }
-      }
-
-      if (!isActive) {
-        showRelationsFor(idParts[0]);
-        activeRelCircleList.push(this);
-      }
-      else {
-        hideRelationsFor(idParts[0]);
-        for (var x = 0; x < activeRelCircleList.length; x++) {
-          if (activeRelCircleList[x] === this) {
-            activeRelCircleList.splice(x, 1);
-          } else if (typeof (activeRelCircleList[x]._groups) != 'undefined') {
-            if (activeRelCircleList[x]._groups[0][0] === this)
-              activeRelCircleList.splice(x, 1);
-          }
-        }
-
-      }
-
-      console.log('circle clicked');
-
+      clickCircleHandler(this.id);
     });
 
 
@@ -621,11 +589,102 @@ d3.json("data.json", function (data) {
     });
 
 
+    //Predraw death sign
+    var crossColor='white';
+    var buff = 5;
+    var crossID = name+'_cross';
+    crossID =crossID.replace(' ','0');
+    crossID =crossID.replace("'",'1');
 
+    var deathCross =area.append('g').attr('id',crossID);
+    deathCross.append('line').attr('x1',x-buff).attr('y1',y-buff).attr('x2',x+buff).attr('y2',y+buff)
+    .attr('stroke-width',3).attr('stroke',crossColor);
+    deathCross.append('line').attr('x1',x+buff).attr('y1',y-buff).attr('x2',x-buff).attr('y2',y+buff)
+    .attr('stroke-width',3).attr('stroke',crossColor);
+    deathCross.classed('hidden',true);
+
+    deathCross.on('click',function(d,index){
+      clickCircleHandler(name + '_'+i);
+    });
+
+    
     charCircles.push(c);
 
 
   }
+
+  //functions regarding circles
+  function clickCircleHandler(id){
+    // var componentId = this.id;
+     var componentId = id;
+     var idParts = componentId.split("_");
+ 
+     var isActive = false;
+     for (var x = 0; x < activeRelCircleList.length; x++) {
+       if (activeRelCircleList[x] === this) {
+         isActive = true;
+       } else if (typeof (activeRelCircleList[x]._groups) != 'undefined') {
+         if (activeRelCircleList[x]._groups[0][0] === this) {
+           isActive = true;
+         }
+       }
+     }
+ 
+     if (!isActive) {
+       showRelationsFor(idParts[0]);
+       activeRelCircleList.push(this);
+     }
+     else {
+       hideRelationsFor(idParts[0]);
+       for (var x = 0; x < activeRelCircleList.length; x++) {
+         if (activeRelCircleList[x] === this) {
+           activeRelCircleList.splice(x, 1);
+         } else if (typeof (activeRelCircleList[x]._groups) != 'undefined') {
+           if (activeRelCircleList[x]._groups[0][0] === this)
+             activeRelCircleList.splice(x, 1);
+         }
+       }
+ 
+     }
+ 
+     console.log('circle clicked');
+   }
+
+   function ensureCirclesAboveLines(){
+    //THOUGHT: drawing circles after rellines also had no effect.
+    for(var i =0;i<charCircles.length;i++){
+      charCircles[i].classed('hidden',true);
+      charCircles[i].classed('hidden',false);
+    }
+  }
+
+  function checkDeaths(){
+    for(var i=0;i<charCircles.length;i++){
+      var id = charCircles[i]._groups[0][0].getAttribute('id');
+      
+      var idComps = id.split('_');
+      var name = idComps[0];
+      var killed = charCircles[i]._groups[0][0].getAttribute('data-killed');
+    
+      var killedNr = epStringToNr(killed);
+      var currentNr = epStringToNr(currentEP);
+      if(killed==='NA')killedNr =Number.MAX_VALUE;
+      var crossId = "#"+name +"_cross";
+      crossId = crossId.replace(' ','0');
+      crossId = crossId.replace("'",'1');
+      var to = typeof(crossId);
+      var tos = typeof(crossId.toString());
+      var deathCross =d3.select(crossId.toString());
+     
+      if(killedNr<=currentNr){
+        deathCross.classed('hidden',false);
+      }else{
+        deathCross.classed('hidden',true);
+      }
+
+    }
+  }
+
 
   //Generating koordinates for next person from according houses
   function getStarkX() {
@@ -925,12 +984,13 @@ d3.json("data.json", function (data) {
   }
 
 
-  function ensureCirclesAboveLines(){
-    for(var i =0;i<charCircles.length;i++){
-      charCircles[i].classed('hidden',true);
-      charCircles[i].classed('hidden',false);
-    }
-  }
+
+
+
+
+
+  
+
 
 
   //functions to get the episode string e.g s01e02 from it's number and vice versa
@@ -1000,6 +1060,7 @@ d3.json("data.json", function (data) {
     epLabel.text(epString);
     currentEP = epString;
     updateRelations();
+    checkDeaths();
   });
 
   area1.append('button').text('clear relations').on('click', function (d, i) {
