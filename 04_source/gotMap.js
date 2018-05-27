@@ -44,7 +44,16 @@ var epLabel = svg2.append('text').text('s01e01').attr("font-family", "sans-serif
 
 
 
+var toolTip = d3.select('body').append('div').attr('id','tooltip').style('left',100+'px').style('top',100+'px');
+var toolTipText = toolTip.append('p').text('NA');
+toolTip.classed('hidden',true);
+
+
+
+
+
 var currentEP = 's01e01';
+
 
 
 
@@ -568,8 +577,12 @@ d3.json("data.json", function (data) {
       killEP = "NA"
     }
     var c = area.append('circle').attr('r', circleRad).attr('cx', x).attr('cy', y)
-      .attr('fill', color).attr('id', name + '_' + i).attr('data-killed', killEP).attr('data-first', first)
-      .on('click', function (d, index) {
+    .attr('fill', color).attr('id', name + '_' + i).attr('data-killed', killEP)
+    .attr('data-first', first);
+
+    //ADD Eventhandlers for the circles events
+
+      c.on('click', function (d, index) {
 
         var componentId = this.id;
         var idParts = componentId.split("_");
@@ -605,6 +618,24 @@ d3.json("data.json", function (data) {
         console.log('circle clicked');
 
       });
+
+
+      c.on('mouseover',function(d,index){
+          toolTip.style('left',x+'px').style('top',(y+22)+'px');
+          var charID = this.getAttribute('id');
+          var idComps = charID.split('_');
+          var name = idComps[0];
+          toolTipText.text(name);
+          toolTip.classed('hidden',false);
+      });
+
+
+      c.on('mouseout',function(d,index){
+        toolTip.classed('hidden',true);
+      });
+
+
+
       charCircles.push(c);
 
       
