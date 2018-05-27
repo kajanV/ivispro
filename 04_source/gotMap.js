@@ -805,7 +805,7 @@ d3.json("data.json", function (data) {
       }
     }
 
-
+    ensureCirclesAboveLines();
 
 
   }
@@ -829,6 +829,7 @@ d3.json("data.json", function (data) {
 
       }
     }
+    ensureCirclesAboveLines();
   }
 
   function hideRelationsFor(name) {
@@ -873,6 +874,7 @@ d3.json("data.json", function (data) {
 
     }
     activeRelCircleList = charCircles.slice(0);
+    ensureCirclesAboveLines();
 
   }
 
@@ -911,6 +913,7 @@ d3.json("data.json", function (data) {
 
       }
     }
+    ensureCirclesAboveLines();
 
 
   }
@@ -918,6 +921,14 @@ d3.json("data.json", function (data) {
   function prepRelUpdate() {
     for (var x = 0; x < relLineList.length; x++) {
       relLineList[x]._groups[0][0].style.visibility = 'hidden';
+    }
+  }
+
+
+  function ensureCirclesAboveLines(){
+    for(var i =0;i<charCircles.length;i++){
+      charCircles[i].classed('hidden',true);
+      charCircles[i].classed('hidden',false);
     }
   }
 
