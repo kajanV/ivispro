@@ -653,6 +653,8 @@ d3.json("data.json", function (data) {
   }
 
   function circleMouseOverHandler(x, y, circle) {
+
+    if(x>=1100)x=x-200;
     toolTip.style('left', x + 'px').style('top', (y + 22) + 'px');
     // var charID = this.getAttribute('id');
     var charID = circle.getAttribute('id');
