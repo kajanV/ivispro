@@ -599,6 +599,7 @@ d3.json("data.json", function (data) {
     deathCross.classed('hidden', true);
 
     deathCross.on('click', function (d, index) {
+      //I seems to stay 116 get index from somewhere
       circleClickHandler(name + '_' + i);
     });
 
@@ -617,37 +618,56 @@ d3.json("data.json", function (data) {
 
   //functions regarding circles
   function circleClickHandler(id) {
-    // var componentId = this.id;
+    
     var componentId = id;
     var idParts = componentId.split("_");
+    var circle;
 
     var isActive = false;
     for (var x = 0; x < activeRelCircleList.length; x++) {
-      if (activeRelCircleList[x] === this) {
-        isActive = true;
-      } else if (typeof (activeRelCircleList[x]._groups) != 'undefined') {
-        if (activeRelCircleList[x]._groups[0][0] === this) {
+      if (typeof (activeRelCircleList[x]._groups) != 'undefined') {
+        if (activeRelCircleList[x]._groups[0][0].getAttribute('id').split('_')[0]=== idParts[0]) {
           isActive = true;
+          break;
         }
+      }else if (activeRelCircleList[x].getAttribute('id').split('_')[0] === idParts[0]) {
+        isActive = true;
+        break;
       }
     }
 
     if (!isActive) {
       showRelationsFor(idParts[0]);
-      activeRelCircleList.push(this);
+      for(var i=0;i<charCircles.length;i++){
+        var charCircleId = charCircles[i]._groups[0][0].getAttribute('id');
+        
+        if(charCircleId.split('_')[0] === idParts[0]){
+          circle=charCircles[i]._groups[0][0];
+          break;
+        }}
+      
+
+
+      activeRelCircleList.push(circle);
     }
     else {
       hideRelationsFor(idParts[0]);
       for (var x = 0; x < activeRelCircleList.length; x++) {
-        if (activeRelCircleList[x] === this) {
-          activeRelCircleList.splice(x, 1);
-        } else if (typeof (activeRelCircleList[x]._groups) != 'undefined') {
-          if (activeRelCircleList[x]._groups[0][0] === this)
+        if(typeof(activeRelCircleList[x]._groups) != 'undefined'){
+          if (activeRelCircleList[x]._groups[0][0].getAttribute('id').toString() === id.toString()){
             activeRelCircleList.splice(x, 1);
+            break;
+          }
+         
+        }else{
+          if (activeRelCircleList[x].getAttribute('id') == id) {
+            activeRelCircleList.splice(x, 1);
+            break;
         }
+
       }
 
-    }
+    }}
 
     console.log('circle clicked');
   }
