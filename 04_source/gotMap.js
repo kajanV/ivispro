@@ -42,6 +42,14 @@ var epLabel = svg2.append('text').text('s01e01').attr("font-family", "sans-serif
   .attr("font-size", "24px").style('fill', 'black').style("text-anchor", "start")
   .attr('x', '20').attr('y', '30%');
 
+svg2.append('text').text('Killed this episode:').attr("font-family", "sans-serif")
+  .attr("font-size", "20px").style('fill', 'black').style("text-anchor", "start")
+  .attr('x', '20').attr('y', '60%');
+
+var killedLabel = svg2.append('text').text('0').attr("font-family", "sans-serif")
+  .attr("font-size", "24px").style('fill', 'black').style("text-anchor", "start")
+  .attr('x','20').attr('y', '70%');
+
 
 
 var toolTip = d3.select('body').append('div').attr('id', 'tooltip').style('left', 100 + 'px').style('top', 100 + 'px');
@@ -54,7 +62,10 @@ toolTip.classed('hidden', true);
 
 var currentEP = 's01e01';
 
-
+d3.csv("tvviewers_us.csv", function(data) {
+  console.log(data[1]);
+   
+});
 
 
 
@@ -565,7 +576,7 @@ d3.json("data.json", function (data) {
     }
     var c = area.append('circle').attr('r', circleRad).attr('cx', x).attr('cy', y)
       .attr('fill', color).attr('id', name + '_' + i).attr('data-killed', killEP)
-      .attr('data-first', first);
+      .attr('data-first', first).classed('sortable',true);
 
     //ADD Eventhandlers for the circles events
 
@@ -593,9 +604,9 @@ d3.json("data.json", function (data) {
 
     var deathCross = area.append('g').attr('id', crossID);
     deathCross.append('line').attr('x1', x - buff).attr('y1', y - buff).attr('x2', x + buff).attr('y2', y + buff)
-      .attr('stroke-width', 3).attr('stroke', crossColor);
+      .attr('stroke-width', 3).attr('stroke', crossColor).classed('sortable',true);
     deathCross.append('line').attr('x1', x + buff).attr('y1', y - buff).attr('x2', x - buff).attr('y2', y + buff)
-      .attr('stroke-width', 3).attr('stroke', crossColor);
+      .attr('stroke-width', 3).attr('stroke', crossColor).classed('sortable',true);
     deathCross.classed('hidden', true);
 
     deathCross.on('click', function (d, index) {
@@ -669,7 +680,7 @@ d3.json("data.json", function (data) {
 
     }}
 
-    console.log('circle clicked');
+    //console.log('circle clicked');
   }
 
   function circleMouseOverHandler(x, y, circle) {
@@ -886,7 +897,7 @@ d3.json("data.json", function (data) {
             color = 'lightsalmon';
           }
 
-          var relLine = svg.append('line').attr('x1', srcX).attr('y1', srcY)
+          var relLine = svg.append('line').attr('x1', srcX).attr('y1', srcY).classed('sortable',true)
             .attr('x2', tarX).attr('y2', tarY).attr('stroke-width', 2).attr('stroke', color)
             .attr('data-src', person.name)
             .attr('data-target', targetName)
@@ -952,7 +963,7 @@ d3.json("data.json", function (data) {
     }
     activeRelCircleList = [];
 
-    console.log("Relations cleaned.");
+    //console.log("Relations cleaned.");
 
   };
 
@@ -1014,6 +1025,21 @@ d3.json("data.json", function (data) {
     }
     ensureCirclesAboveLines();
 
+
+  }
+
+  function getNrKilledInEP(){
+    var countDeath = 0;
+    for (var i = 0; i < charCircles.length; i++) {
+      var killed= charCircles[i]._groups[0][0].getAttribute('data-killed');
+      
+      if(currentEP===killed){
+        countDeath=countDeath+1;
+      }
+
+    }
+ 
+    return countDeath;
 
   }
 
@@ -1091,16 +1117,17 @@ d3.json("data.json", function (data) {
 
   //Event Handlers for additional controls in sub areas
   slider.on('change', function (d, index) {
-    console.log('slider info: ');
-    console.log('value: ' + this.value);
+    //console.log('slider info: ');
+    //console.log('value: ' + this.value);
     var epString = epNrToString(this.value);
-    console.log('ep string: ' + epString);
-    console.log('ep nr: ' + epStringToNr(epString));
+    //console.log('ep string: ' + epString);
+    //console.log('ep nr: ' + epStringToNr(epString));
 
     epLabel.text(epString);
     currentEP = epString;
     updateRelations();
     checkDeaths();
+    killedLabel.text(getNrKilledInEP());
   });
 
   area1.append('button').text('clear relations').on('click', function (d, i) {
