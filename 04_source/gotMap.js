@@ -61,9 +61,33 @@ toolTip.classed('hidden', true);
 
 
 var currentEP = 's01e01';
+var viewerDataPs = [];
 
 d3.csv("tvviewers_us.csv", function(data) {
-  console.log(data[1]);
+  //console.log(data[x].getAttribute('Ep. '+ y));
+
+
+  for(var x =0; x<data.length;x++){
+    for(var y=1;y<11;y++){
+
+      var epName = 'Ep_'+y;
+      var viewerData = data[x];
+
+      var epBuildComp ='0';
+      if(y==10)epBuildComp='';
+      var fullEpName = 's0'+(x+1)+'e'+epBuildComp+y;
+      var viewerDataP = d3.select('body').append('p').classed('hidden',true)
+      .attr('data-viewers',viewerData[epName])
+      .attr('data-episode',fullEpName)      ;
+      viewerDataPs.push(viewerDataP);
+      
+    }
+    
+  }
+
+
+
+  console.log(viewerDataPs);
    
 });
 
