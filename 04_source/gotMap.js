@@ -43,7 +43,7 @@ const epInfoBox = area3
   .attr("height", epInfoBoxHeight)
   .style("border", "1px solid black")
   .style('background-color', 'aliceblue')
-  .style('float','left');
+  .style('float', 'left');
 
 var epLabel = epInfoBox.append('text').text('s01e01').attr("font-family", "sans-serif")
   .attr("font-size", "24px").style('fill', 'black').style("text-anchor", "start")
@@ -55,7 +55,7 @@ epInfoBox.append('text').text('Killed this episode:').attr("font-family", "sans-
 
 var killedLabel = epInfoBox.append('text').text('0').attr("font-family", "sans-serif")
   .attr("font-size", "24px").style('fill', 'black').style("text-anchor", "start")
-  .attr('x','20').attr('y', '60%');
+  .attr('x', '20').attr('y', '60%');
 
 epInfoBox.append('text').text('TV-Viewers US:').attr("font-family", "sans-serif")
   .attr("font-size", "20px").style('fill', 'black').style("text-anchor", "start")
@@ -63,23 +63,23 @@ epInfoBox.append('text').text('TV-Viewers US:').attr("font-family", "sans-serif"
 
 var viewersLabel = epInfoBox.append('text').text('2220000').attr("font-family", "sans-serif")
   .attr("font-size", "22px").style('fill', 'black').style("text-anchor", "start")
-  .attr('x','20').attr('y', '90%');
+  .attr('x', '20').attr('y', '90%');
 
 
 //Create character info box in area 3
 const charInfoBoxHeight = 200, charInfoBoxWidth = 900;
 
 const charInfoBoxWrapper = area3.append('div')
-.style('overflow-y','auto')
-.style('height',(charInfoBoxHeight+30)+'px')
-.style('width',(charInfoBoxWidth+30)+'px')
-.style('position','relative')
-.style('left','60px');
+  .style('overflow-y', 'auto')
+  .style('height', (charInfoBoxHeight + 30) + 'px')
+  .style('width', (charInfoBoxWidth + 30) + 'px')
+  .style('position', 'relative')
+  .style('left', '60px');
 
 const charInfoBox = charInfoBoxWrapper
   .append("svg")
-  .style("width", charInfoBoxWidth+'px')
-  .style("height", charInfoBoxHeight+'px')
+  .style("width", charInfoBoxWidth + 'px')
+  .style("height", charInfoBoxHeight + 'px')
   .style("border", "1px solid black")
   .style('background-color', 'aliceblue');
 
@@ -98,28 +98,28 @@ var currentEP = 's01e01';
 //list for hidden p elements, that contatin viewer data
 var viewerDataPs = [];
 
-d3.csv("tvviewers_us.csv", function(data) {
-  
-  for(var x =0; x<data.length;x++){
-    for(var y=1;y<11;y++){
+d3.csv("tvviewers_us.csv", function (data) {
 
-      var epName = 'Ep_'+y;
+  for (var x = 0; x < data.length; x++) {
+    for (var y = 1; y < 11; y++) {
+
+      var epName = 'Ep_' + y;
       var viewerData = data[x];
 
-      var epBuildComp ='0';
-      if(y==10)epBuildComp='';
-      var fullEpName = 's0'+(x+1)+'e'+epBuildComp+y;
-      var viewerDataP = d3.select('body').append('p').classed('hidden',true)
-      .attr('data-viewers',viewerData[epName])
-      .attr('data-episode',fullEpName)      ;
+      var epBuildComp = '0';
+      if (y == 10) epBuildComp = '';
+      var fullEpName = 's0' + (x + 1) + 'e' + epBuildComp + y;
+      var viewerDataP = d3.select('body').append('p').classed('hidden', true)
+        .attr('data-viewers', viewerData[epName])
+        .attr('data-episode', fullEpName);
       viewerDataPs.push(viewerDataP);
-      
+
     }
-    
+
   }
 
-  
-   
+
+
 });
 
 
@@ -132,7 +132,7 @@ d3.json("data.json", function (data) {
   });
   area1.append('button').text('draw all relations').on('click', function (d, i) {
     showRelations();
-  
+
   });
 
   //Add event handler for slider
@@ -338,7 +338,7 @@ d3.json("data.json", function (data) {
 
 
   console.log(data);
-  
+
 
 
 
@@ -652,7 +652,7 @@ d3.json("data.json", function (data) {
     }
     var c = area.append('circle').attr('r', circleRad).attr('cx', x).attr('cy', y)
       .attr('fill', color).attr('id', name + '_' + i).attr('data-killed', killEP)
-      .attr('data-first', first).classed('sortable',true);
+      .attr('data-first', first).classed('sortable', true);
 
     //ADD Eventhandlers for the circles events
 
@@ -680,14 +680,14 @@ d3.json("data.json", function (data) {
 
     var deathCross = area.append('g').attr('id', crossID);
     deathCross.append('line').attr('x1', x - buff).attr('y1', y - buff).attr('x2', x + buff).attr('y2', y + buff)
-      .attr('stroke-width', 3).attr('stroke', crossColor).classed('sortable',true);
+      .attr('stroke-width', 3).attr('stroke', crossColor).classed('sortable', true);
     deathCross.append('line').attr('x1', x + buff).attr('y1', y - buff).attr('x2', x - buff).attr('y2', y + buff)
-      .attr('stroke-width', 3).attr('stroke', crossColor).classed('sortable',true);
+      .attr('stroke-width', 3).attr('stroke', crossColor).classed('sortable', true);
     deathCross.classed('hidden', true);
 
     deathCross.on('click', function (d, index) {
       //no valid id, cause called when clicked, but id part of id not needed for clickhandler
-      circleClickHandler(name + '_noValidID' );
+      circleClickHandler(name + '_noValidID');
     });
 
     deathCross.on('mouseover', function (d, index) {
@@ -705,7 +705,7 @@ d3.json("data.json", function (data) {
 
   //functions regarding circles
   function circleClickHandler(id) {
-    
+
     var componentId = id;
     var idParts = componentId.split("_");
     var circle;
@@ -713,11 +713,11 @@ d3.json("data.json", function (data) {
     var isActive = false;
     for (var x = 0; x < activeRelCircleList.length; x++) {
       if (typeof (activeRelCircleList[x]._groups) != 'undefined') {
-        if (activeRelCircleList[x]._groups[0][0].getAttribute('id').split('_')[0]=== idParts[0]) {
+        if (activeRelCircleList[x]._groups[0][0].getAttribute('id').split('_')[0] === idParts[0]) {
           isActive = true;
           break;
         }
-      }else if (activeRelCircleList[x].getAttribute('id').split('_')[0] === idParts[0]) {
+      } else if (activeRelCircleList[x].getAttribute('id').split('_')[0] === idParts[0]) {
         isActive = true;
         break;
       }
@@ -725,14 +725,15 @@ d3.json("data.json", function (data) {
 
     if (!isActive) {
       showRelationsFor(idParts[0]);
-      for(var i=0;i<charCircles.length;i++){
+      for (var i = 0; i < charCircles.length; i++) {
         var charCircleId = charCircles[i]._groups[0][0].getAttribute('id');
-        
-        if(charCircleId.split('_')[0] === idParts[0]){
-          circle=charCircles[i]._groups[0][0];
+
+        if (charCircleId.split('_')[0] === idParts[0]) {
+          circle = charCircles[i]._groups[0][0];
           break;
-        }}
-      
+        }
+      }
+
 
 
       activeRelCircleList.push(circle);
@@ -740,28 +741,29 @@ d3.json("data.json", function (data) {
     else {
       hideRelationsFor(idParts[0]);
       for (var x = 0; x < activeRelCircleList.length; x++) {
-        if(typeof(activeRelCircleList[x]._groups) != 'undefined'){
-          if (activeRelCircleList[x]._groups[0][0].getAttribute('id').toString() === id.toString()){
+        if (typeof (activeRelCircleList[x]._groups) != 'undefined') {
+          if (activeRelCircleList[x]._groups[0][0].getAttribute('id').toString() === id.toString()) {
             activeRelCircleList.splice(x, 1);
             break;
           }
-         
-        }else{
+
+        } else {
           if (activeRelCircleList[x].getAttribute('id') == id) {
             activeRelCircleList.splice(x, 1);
             break;
+          }
+
         }
 
       }
+    }
 
-    }}
 
-    
   }
 
   function circleMouseOverHandler(x, y, circle) {
 
-    if(x>=1100)x=x-200;
+    if (x >= 1100) x = x - 200;
     toolTip.style('left', x + 'px').style('top', (y + 22) + 'px');
     var charID = circle.getAttribute('id');
     var idComps = charID.split('_');
@@ -972,7 +974,7 @@ d3.json("data.json", function (data) {
             color = 'lightsalmon';
           }
 
-          var relLine = svg.append('line').attr('x1', srcX).attr('y1', srcY).classed('sortable',true)
+          var relLine = svg.append('line').attr('x1', srcX).attr('y1', srcY).classed('sortable', true)
             .attr('x2', tarX).attr('y2', tarY).attr('stroke-width', 2).attr('stroke', color)
             .attr('data-src', person.name)
             .attr('data-target', targetName)
@@ -1101,34 +1103,34 @@ d3.json("data.json", function (data) {
 
   }
 
-  function getNrKilledInEP(){
+  function getNrKilledInEP() {
     var countDeath = 0;
     for (var i = 0; i < charCircles.length; i++) {
-      var killed= charCircles[i]._groups[0][0].getAttribute('data-killed');
-      
-      if(currentEP===killed){
-        countDeath=countDeath+1;
+      var killed = charCircles[i]._groups[0][0].getAttribute('data-killed');
+
+      if (currentEP === killed) {
+        countDeath = countDeath + 1;
       }
 
     }
- 
+
     return countDeath;
 
   }
 
-  function getNrViewersInEP(){
-    var viewer=0;
-    
-    for(var i=0; i<viewerDataPs.length;++i){
+  function getNrViewersInEP() {
+    var viewer = 0;
+
+    for (var i = 0; i < viewerDataPs.length; ++i) {
       var viewerEP = viewerDataPs[i]._groups[0][0].getAttribute('data-episode');
 
-      if(currentEP===viewerEP){
-        viewer=viewerDataPs[i]._groups[0][0].getAttribute('data-viewers')*Math.pow(10,6);
+      if (currentEP === viewerEP) {
+        viewer = viewerDataPs[i]._groups[0][0].getAttribute('data-viewers') * Math.pow(10, 6);
       }
 
     }
     return viewer;
-    
+
   }
 
   function prepRelUpdate() {
@@ -1193,15 +1195,6 @@ d3.json("data.json", function (data) {
     }
     return result;
   }
-
-
-  //Event Handlers for additional controls in sub areas
-
-
-
-
-
-
 
 });
 
