@@ -91,6 +91,48 @@ const charInfoBoxPlaceholder = charInfoBox.append('text')
 .attr('x', '50%').attr('y', '50%')
 
 
+const charInfoBoxNameLabel = charInfoBox.append('text')
+.attr("font-family", "sans-serif")
+.attr("font-size", "20px").style('fill', 'black')
+.style("text-anchor", "start")
+.attr('x', '30%').attr('y', '35px')
+.text('Name:')
+.classed('hidden',true);
+
+const charInfoBoxFactionLabel = charInfoBox.append('text')
+.attr("font-family", "sans-serif")
+.attr("font-size", "20px").style('fill', 'black')
+.style("text-anchor", "start")
+.attr('x', '30%').attr('y', '60px')
+.text('Faction:')
+.classed('hidden',true);
+
+const charInfoBoxStartLabel = charInfoBox.append('text')
+.attr("font-family", "sans-serif")
+.attr("font-size", "20px").style('fill', 'black')
+.style("text-anchor", "start")
+.attr('x', '30%').attr('y', '85px')
+.text('First appearance:')
+.classed('hidden',true);
+
+const charInfoBoxKilledLabel = charInfoBox.append('text')
+.attr("font-family", "sans-serif")
+.attr("font-size", "20px").style('fill', 'black')
+.style("text-anchor", "start")
+.attr('x', '30%').attr('y', '110px')
+.text('Killed:')
+.classed('hidden',true);
+
+const charInfoBoxRelationsLabel = charInfoBox.append('text')
+.attr("font-family", "sans-serif")
+.attr("font-size", "20px").style('fill', 'black')
+.style("text-anchor", "start")
+.attr('x', '30%').attr('y', '110px')
+.text('Relations:')
+.classed('hidden',true);
+
+const charInfoBoxRelationsList = charInfoBox.append('g');
+
 
 
 //Predraw tooltip  
@@ -108,6 +150,8 @@ var viewerDataPs = [];
 //Holds currently resp. last clicked character
 var lastClickedChar;
 
+
+//Pull out viewer data from csv and put in DOM (as hidden p elements)
 d3.csv("tvviewers_us.csv", function (data) {
 
   for (var x = 0; x < data.length; x++) {
@@ -133,7 +177,9 @@ d3.csv("tvviewers_us.csv", function (data) {
 });
 
 
-
+//Go through character and relation data, predraw all components
+//and load later on relevant data to DOM (as drawn circles and lines)
+//contain many function definitions for the data load scope only.
 d3.json("data.json", function (data) {
 
   //Add buttons to area 1 and their event handlers
@@ -164,6 +210,9 @@ d3.json("data.json", function (data) {
   const textPadding = 25;
   const strokeWidth = 3;
 
+
+  //Folowing drawing areas are needed "globally" in d3.json(..) scope
+  //Therefor moving these definitions in separate functions is not possible.
 
   //DRAWING House Stark Area
   const starkArea = svg.append('g');
@@ -457,6 +506,7 @@ d3.json("data.json", function (data) {
 
 
   //Processing different Houses
+  //Add calculated postion data and draw according character circle
   function processStark(person) {
     var isStark = person.faction === 'House Stark';
     if (isStark) {
@@ -782,12 +832,56 @@ d3.json("data.json", function (data) {
   }
 
   function fillCharInfoBox(personCircle){
+    //Define text positioning of relations
+    var startY = 135; //in px
+    var startX = 30; //in %
+    var ySpace = 25;
+
+    //Get person data
     var person = personCircle._groups[0][0];
     var id = person.getAttribute('id');
     var name = id.split('_'[0]);
     var faction = person.faction;
     var first = person.first;
     var killed = person.killed;
+    var relations = getRelationsFor(name);
+
+    charInfoBoxPlaceholder.classed('hidden',true);
+
+    charInfoBoxNameLabel.classed('hidden',false);
+    charInfoBoxNameLabel.text('Name: '+name);
+
+    charInfoBoxFactionLabel.classed('hidden',false);
+    charInfoBoxFactionLabel.text('Faction: '+faction);
+
+    charInfoBoxStartLabel.classed('hidden',false);
+    charInfoBoxStartLabel.text('First appearance: '+first);
+
+    charInfoBoxKilledLabel.classed('hidden',false);
+    charInfoBoxKilledLabel.text('Killed: '+killed);
+
+
+    charInfoBoxRelationsList.selectAll('text')
+    .data(relations)
+    .exit()
+    .remove();
+
+    charInfoBoxRelationsList.selectAll('text')
+    .data(relations)
+    .enter()
+    .append('text')
+    .attr("font-family", "sans-serif")
+    .attr("font-size", "20px").style('fill', 'black')
+    .style("text-anchor", "start")
+    .attr('x', startX+'%').attr('y', function(d,i){
+      return (startY + ySpace*i)+'px';
+    })
+    .text(function(d,i){
+      return d.source +' '+d.type+' '+d.target;
+    });
+    
+
+
 
 
 
@@ -929,19 +1023,14 @@ d3.json("data.json", function (data) {
   }
 
   //FUNCTIONS regarding relations
-  function getRelations() {
-    return data.relations;
-  }
-
-
   function getRelationsFor(pName) {
 
     var resultList = [];
 
 
-    for (var x = 0; x < relations.length; x++) {
-       if (relations[x].source === pName) {
-        resultList.push(relations[x]);
+    for (var x = 0; x < relLineList.length; x++) {
+       if (relLineList[x]._groups[0][0].getAttribute('data-src') === pName) {
+        resultList.push(relLineList[x]._groups[0][0]);
       }
     }
 
