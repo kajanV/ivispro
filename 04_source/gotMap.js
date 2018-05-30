@@ -17,6 +17,8 @@ width = canvWidth - margin.left - margin.right;
 const area1 = d3.select('body').append('div').attr('id', 'area1').attr('class', 'area');
 
 
+
+
 //Area 2 for slider
 const area2 = d3.select('body').append('div').attr('id', 'area2').attr('class', 'area');
 
@@ -31,15 +33,17 @@ var slider = area2.append('input')
 
 
 //Area 3 for Info and Character Box
-const area3Height = 200, area3Width = 200;
-
 const area3 = d3.select('body').append('div').attr('id', 'area3').attr('class', 'area');
+
+//Create ep info box in Area 3
+const epInfoBoxHeight = 200, epInfoBoxWidth = 200;
 const epInfoBox = area3
   .append("svg")
-  .attr("width", area3Width)
-  .attr("height", area3Height)
+  .attr("width", epInfoBoxWidth)
+  .attr("height", epInfoBoxHeight)
   .style("border", "1px solid black")
-  .style('background-color', 'aliceblue');
+  .style('background-color', 'aliceblue')
+  .style('float','left');
 
 var epLabel = epInfoBox.append('text').text('s01e01').attr("font-family", "sans-serif")
   .attr("font-size", "24px").style('fill', 'black').style("text-anchor", "start")
@@ -62,6 +66,23 @@ var viewersLabel = epInfoBox.append('text').text('2220000').attr("font-family", 
   .attr('x','20').attr('y', '90%');
 
 
+//Create character info box in area 3
+const charInfoBoxHeight = 200, charInfoBoxWidth = 900;
+
+const charInfoBoxWrapper = area3.append('div')
+.style('overflow-y','auto')
+.style('height',(charInfoBoxHeight+30)+'px')
+.style('width',(charInfoBoxWidth+30)+'px')
+.style('position','relative')
+.style('left','60px');
+
+const charInfoBox = charInfoBoxWrapper
+  .append("svg")
+  .style("width", charInfoBoxWidth+'px')
+  .style("height", charInfoBoxHeight+'px')
+  .style("border", "1px solid black")
+  .style('background-color', 'aliceblue');
+
 
 
 
@@ -71,10 +92,10 @@ var toolTipText = toolTip.append('p').text('NA');
 toolTip.classed('hidden', true);
 
 
-
-
-
+//Defines current ep (for slider control)
 var currentEP = 's01e01';
+
+//list for hidden p elements, that contatin viewer data
 var viewerDataPs = [];
 
 d3.csv("tvviewers_us.csv", function(data) {
@@ -105,7 +126,28 @@ d3.csv("tvviewers_us.csv", function(data) {
 
 d3.json("data.json", function (data) {
 
+  //Add buttons to area 1 and their event handlers
+  area1.append('button').text('clear relations').on('click', function (d, i) {
+    hideRelations();
+  });
+  area1.append('button').text('draw all relations').on('click', function (d, i) {
+    showRelations();
+  
+  });
 
+  //Add event handler for slider
+  slider.on('change', function (d, index) {
+
+    var epString = epNrToString(this.value);
+
+
+    epLabel.text(epString);
+    currentEP = epString;
+    updateRelations();
+    checkDeaths();
+    killedLabel.text(getNrKilledInEP());
+    viewersLabel.text(getNrViewersInEP());
+  });
 
   //Constants for unified drawing and calculation
   const circleRad = 10;
@@ -721,7 +763,6 @@ d3.json("data.json", function (data) {
 
     if(x>=1100)x=x-200;
     toolTip.style('left', x + 'px').style('top', (y + 22) + 'px');
-    // var charID = this.getAttribute('id');
     var charID = circle.getAttribute('id');
     var idComps = charID.split('_');
     var name = idComps[0];
@@ -1098,14 +1139,6 @@ d3.json("data.json", function (data) {
 
 
 
-
-
-
-
-
-
-
-
   //functions to get the episode string e.g s01e02 from it's number and vice versa
   function epNrToString(epNr) {
     var result;
@@ -1163,26 +1196,9 @@ d3.json("data.json", function (data) {
 
 
   //Event Handlers for additional controls in sub areas
-  slider.on('change', function (d, index) {
-
-    var epString = epNrToString(this.value);
 
 
-    epLabel.text(epString);
-    currentEP = epString;
-    updateRelations();
-    checkDeaths();
-    killedLabel.text(getNrKilledInEP());
-    viewersLabel.text(getNrViewersInEP());
-  });
 
-  area1.append('button').text('clear relations').on('click', function (d, i) {
-    hideRelations();
-  });
-  area1.append('button').text('draw all relations').on('click', function (d, i) {
-    showRelations();
-
-  });
 
 
 
