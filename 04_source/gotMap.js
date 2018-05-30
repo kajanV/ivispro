@@ -40,15 +40,23 @@ const svg2 = area3
 
 var epLabel = svg2.append('text').text('s01e01').attr("font-family", "sans-serif")
   .attr("font-size", "24px").style('fill', 'black').style("text-anchor", "start")
-  .attr('x', '20').attr('y', '30%');
+  .attr('x', '20').attr('y', '25%');
 
 svg2.append('text').text('Killed this episode:').attr("font-family", "sans-serif")
   .attr("font-size", "20px").style('fill', 'black').style("text-anchor", "start")
-  .attr('x', '20').attr('y', '60%');
+  .attr('x', '20').attr('y', '45%');
 
 var killedLabel = svg2.append('text').text('0').attr("font-family", "sans-serif")
   .attr("font-size", "24px").style('fill', 'black').style("text-anchor", "start")
-  .attr('x','20').attr('y', '70%');
+  .attr('x','20').attr('y', '60%');
+
+svg2.append('text').text('TV-Viewers US:').attr("font-family", "sans-serif")
+  .attr("font-size", "20px").style('fill', 'black').style("text-anchor", "start")
+  .attr('x', '20').attr('y', '75%');
+
+var viewersLabel = svg2.append('text').text('2220000').attr("font-family", "sans-serif")
+  .attr("font-size", "22px").style('fill', 'black').style("text-anchor", "start")
+  .attr('x','20').attr('y', '90%');
 
 
 
@@ -84,8 +92,6 @@ d3.csv("tvviewers_us.csv", function(data) {
     }
     
   }
-
-
 
   console.log(viewerDataPs);
    
@@ -1067,6 +1073,21 @@ d3.json("data.json", function (data) {
 
   }
 
+  function getNrViewersInEP(){
+    var viewer=0;
+    
+    for(var i=0; i<viewerDataPs.length;++i){
+      var viewerEP = viewerDataPs[i]._groups[0][0].getAttribute('data-episode');
+
+      if(currentEP===viewerEP){
+        viewer=viewerDataPs[i]._groups[0][0].getAttribute('data-viewers')*Math.pow(10,6);
+      }
+
+    }
+    return viewer;
+    console.log(viewer);
+  }
+
   function prepRelUpdate() {
     for (var x = 0; x < relLineList.length; x++) {
       relLineList[x]._groups[0][0].style.visibility = 'hidden';
@@ -1152,6 +1173,7 @@ d3.json("data.json", function (data) {
     updateRelations();
     checkDeaths();
     killedLabel.text(getNrKilledInEP());
+    viewersLabel.text(getNrViewersInEP());
   });
 
   area1.append('button').text('clear relations').on('click', function (d, i) {
