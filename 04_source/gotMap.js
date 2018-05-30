@@ -13,9 +13,11 @@ height = canvHeight - margin.top - margin.bottom;
 width = canvWidth - margin.left - margin.right;
 
 //Draw sub-Map Areas (slider and infobox)
+//Draw area 1 for Buttons and Legend
 const area1 = d3.select('body').append('div').attr('id', 'area1').attr('class', 'area');
 
 
+//Area 2 for slider
 const area2 = d3.select('body').append('div').attr('id', 'area2').attr('class', 'area');
 
 var slider = area2.append('input')
@@ -28,38 +30,42 @@ var slider = area2.append('input')
   .attr('value', '1');
 
 
+//Area 3 for Info and Character Box
+const area3Height = 200, area3Width = 200;
 
-const area2Height = 200, area2Width = 200;
 const area3 = d3.select('body').append('div').attr('id', 'area3').attr('class', 'area');
-const svg2 = area3
+const epInfoBox = area3
   .append("svg")
-  .attr("width", area2Width)
-  .attr("height", area2Height)
+  .attr("width", area3Width)
+  .attr("height", area3Height)
   .style("border", "1px solid black")
   .style('background-color', 'aliceblue');
 
-var epLabel = svg2.append('text').text('s01e01').attr("font-family", "sans-serif")
+var epLabel = epInfoBox.append('text').text('s01e01').attr("font-family", "sans-serif")
   .attr("font-size", "24px").style('fill', 'black').style("text-anchor", "start")
   .attr('x', '20').attr('y', '25%');
 
-svg2.append('text').text('Killed this episode:').attr("font-family", "sans-serif")
+epInfoBox.append('text').text('Killed this episode:').attr("font-family", "sans-serif")
   .attr("font-size", "20px").style('fill', 'black').style("text-anchor", "start")
   .attr('x', '20').attr('y', '45%');
 
-var killedLabel = svg2.append('text').text('0').attr("font-family", "sans-serif")
+var killedLabel = epInfoBox.append('text').text('0').attr("font-family", "sans-serif")
   .attr("font-size", "24px").style('fill', 'black').style("text-anchor", "start")
   .attr('x','20').attr('y', '60%');
 
-svg2.append('text').text('TV-Viewers US:').attr("font-family", "sans-serif")
+epInfoBox.append('text').text('TV-Viewers US:').attr("font-family", "sans-serif")
   .attr("font-size", "20px").style('fill', 'black').style("text-anchor", "start")
   .attr('x', '20').attr('y', '75%');
 
-var viewersLabel = svg2.append('text').text('2220000').attr("font-family", "sans-serif")
+var viewersLabel = epInfoBox.append('text').text('2220000').attr("font-family", "sans-serif")
   .attr("font-size", "22px").style('fill', 'black').style("text-anchor", "start")
   .attr('x','20').attr('y', '90%');
 
 
 
+
+
+//Predraw tooltip  
 var toolTip = d3.select('body').append('div').attr('id', 'tooltip').style('left', 100 + 'px').style('top', 100 + 'px');
 var toolTipText = toolTip.append('p').text('NA');
 toolTip.classed('hidden', true);
@@ -72,9 +78,7 @@ var currentEP = 's01e01';
 var viewerDataPs = [];
 
 d3.csv("tvviewers_us.csv", function(data) {
-  //console.log(data[x].getAttribute('Ep. '+ y));
-
-
+  
   for(var x =0; x<data.length;x++){
     for(var y=1;y<11;y++){
 
@@ -93,7 +97,7 @@ d3.csv("tvviewers_us.csv", function(data) {
     
   }
 
-  console.log(viewerDataPs);
+  
    
 });
 
@@ -292,7 +296,7 @@ d3.json("data.json", function (data) {
 
 
   console.log(data);
-  console.log(charCircles);
+  
 
 
 
@@ -640,8 +644,8 @@ d3.json("data.json", function (data) {
     deathCross.classed('hidden', true);
 
     deathCross.on('click', function (d, index) {
-      //I seems to stay 116 get index from somewhere
-      circleClickHandler(name + '_' + i);
+      //no valid id, cause called when clicked, but id part of id not needed for clickhandler
+      circleClickHandler(name + '_noValidID' );
     });
 
     deathCross.on('mouseover', function (d, index) {
@@ -710,7 +714,7 @@ d3.json("data.json", function (data) {
 
     }}
 
-    //console.log('circle clicked');
+    
   }
 
   function circleMouseOverHandler(x, y, circle) {
@@ -993,8 +997,6 @@ d3.json("data.json", function (data) {
     }
     activeRelCircleList = [];
 
-    //console.log("Relations cleaned.");
-
   };
 
   function showRelations() {
@@ -1085,7 +1087,7 @@ d3.json("data.json", function (data) {
 
     }
     return viewer;
-    console.log(viewer);
+    
   }
 
   function prepRelUpdate() {
@@ -1162,11 +1164,9 @@ d3.json("data.json", function (data) {
 
   //Event Handlers for additional controls in sub areas
   slider.on('change', function (d, index) {
-    //console.log('slider info: ');
-    //console.log('value: ' + this.value);
+
     var epString = epNrToString(this.value);
-    //console.log('ep string: ' + epString);
-    //console.log('ep nr: ' + epStringToNr(epString));
+
 
     epLabel.text(epString);
     currentEP = epString;
