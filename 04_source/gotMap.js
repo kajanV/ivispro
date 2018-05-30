@@ -84,6 +84,13 @@ const charInfoBox = charInfoBoxWrapper
   .style('background-color', 'aliceblue');
 
 
+const charInfoBoxPlaceholder = charInfoBox.append('text')
+.text('click on one of the characters to find out more about them.')
+.attr("font-family", "sans-serif")
+.attr("font-size", "24px").style('fill', 'black').style("text-anchor", "middle")
+.attr('x', '50%').attr('y', '50%')
+
+
 
 
 //Predraw tooltip  
@@ -97,6 +104,9 @@ var currentEP = 's01e01';
 
 //list for hidden p elements, that contatin viewer data
 var viewerDataPs = [];
+
+//Holds currently resp. last clicked character
+var lastClickedChar;
 
 d3.csv("tvviewers_us.csv", function (data) {
 
@@ -294,11 +304,6 @@ d3.json("data.json", function (data) {
   const martColor = 'deeppink';
   drawMartellArea();
 
-
-  //Preparing character & relations sets (charList is filled in following loop)
-  var relations = getRelations();
-  var charList = [];
-
   //List of all char circles (needed to fill activerellist when drawing all relationships)
   var charCircles = [];
 
@@ -307,8 +312,6 @@ d3.json("data.json", function (data) {
 
   //List for all relations (filled in drawrelations)
   var relLineList = [];
-
-
 
 
   //Loop through characters and draw according circles
@@ -326,7 +329,7 @@ d3.json("data.json", function (data) {
     processTyrell(person);
     processLannister(person);
     processMartell(person);
-    charList.push(person);
+    
   }
 
   //Predraw all relations
@@ -462,7 +465,7 @@ d3.json("data.json", function (data) {
       var persY = getStarkY();
       data.characters[i].xCord = persX;
       data.characters[i].yCord = persY;
-      drawPersonCircle(starkArea, persX, persY, starkColor, person.name, person.killed, person.first);
+      drawPersonCircle(starkArea, persX, persY, starkColor, person.name, person.killed, person.first,person.faction);
 
       if (starkCellCounter == 6) {
         starkCellCounter = 0;
@@ -479,7 +482,7 @@ d3.json("data.json", function (data) {
       var persY = getNWY();
       data.characters[i].xCord = persX;
       data.characters[i].yCord = persY;
-      drawPersonCircle(nwArea, persX, persY, nwColor, person.name, person.killed, person.first);
+      drawPersonCircle(nwArea, persX, persY, nwColor, person.name, person.killed, person.first,person.faction);
 
       if (nwCellCounter == 3) {
         nwCellCounter = 0;
@@ -496,7 +499,7 @@ d3.json("data.json", function (data) {
       var persY = getTargY();
       data.characters[i].xCord = persX;
       data.characters[i].yCord = persY;
-      drawPersonCircle(targArea, persX, persY, targColor, person.name, person.killed, person.first);
+      drawPersonCircle(targArea, persX, persY, targColor, person.name, person.killed, person.first,person.faction);
 
       if (targCellCounter == 4) {
         targCellCounter = 0;
@@ -513,7 +516,7 @@ d3.json("data.json", function (data) {
       var persY = getFFY();
       data.characters[i].xCord = persX;
       data.characters[i].yCord = persY;
-      drawPersonCircle(ffArea, persX, persY, ffColor, person.name, person.killed, person.first);
+      drawPersonCircle(ffArea, persX, persY, ffColor, person.name, person.killed, person.first,person.faction);
 
       if (ffCellCounter == 3) {
         ffCellCounter = 0;
@@ -530,7 +533,7 @@ d3.json("data.json", function (data) {
       var persY = getGJY();
       data.characters[i].xCord = persX;
       data.characters[i].yCord = persY;
-      drawPersonCircle(gjArea, persX, persY, gjColor, person.name, person.killed, person.first);
+      drawPersonCircle(gjArea, persX, persY, gjColor, person.name, person.killed, person.first,person.faction);
 
       if (gjCellCounter == 3) {
         gjCellCounter = 0;
@@ -547,7 +550,7 @@ d3.json("data.json", function (data) {
       var persY = getBaraY();
       data.characters[i].xCord = persX;
       data.characters[i].yCord = persY;
-      drawPersonCircle(baraArea, persX, persY, baraColor, person.name, person.killed, person.first);
+      drawPersonCircle(baraArea, persX, persY, baraColor, person.name, person.killed, person.first,person.faction);
 
       if (baraCellCounter == 4) {
         baraCellCounter = 0;
@@ -564,7 +567,7 @@ d3.json("data.json", function (data) {
       var persY = getOthersY();
       data.characters[i].xCord = persX;
       data.characters[i].yCord = persY;
-      drawPersonCircle(othersArea, persX, persY, othersColor, person.name, person.killed, person.first);
+      drawPersonCircle(othersArea, persX, persY, othersColor, person.name, person.killed, person.first,person.faction);
 
       if (othersCellCounter == 12) {
         othersCellCounter = 0;
@@ -581,7 +584,7 @@ d3.json("data.json", function (data) {
       var persY = getLessY();
       data.characters[i].xCord = persX;
       data.characters[i].yCord = persY;
-      drawPersonCircle(lessArea, persX, persY, lessColor, person.name, person.killed, person.first);
+      drawPersonCircle(lessArea, persX, persY, lessColor, person.name, person.killed, person.first,person.faction);
 
       if (lessCellCounter == 2) {
         lessCellCounter = 0;
@@ -598,7 +601,7 @@ d3.json("data.json", function (data) {
       var persY = getTyreY();
       data.characters[i].xCord = persX;
       data.characters[i].yCord = persY;
-      drawPersonCircle(tyreArea, persX, persY, tyreColor, person.name, person.killed, person.first);
+      drawPersonCircle(tyreArea, persX, persY, tyreColor, person.name, person.killed, person.first,person.faction);
 
       if (tyreCellCounter == 2) {
         tyreCellCounter = 0;
@@ -615,7 +618,7 @@ d3.json("data.json", function (data) {
       var persY = getLannY();
       data.characters[i].xCord = persX;
       data.characters[i].yCord = persY;
-      drawPersonCircle(lannArea, persX, persY, lannColor, person.name, person.killed, person.first);
+      drawPersonCircle(lannArea, persX, persY, lannColor, person.name, person.killed, person.first,person.faction);
 
       if (lannCellCounter == 4) {
         lannCellCounter = 0;
@@ -632,7 +635,7 @@ d3.json("data.json", function (data) {
       var persY = getMartY();
       data.characters[i].xCord = persX;
       data.characters[i].yCord = persY;
-      drawPersonCircle(martArea, persX, persY, martColor, person.name, person.killed, person.first);
+      drawPersonCircle(martArea, persX, persY, martColor, person.name, person.killed, person.first,person.faction);
 
       if (martCellCounter == 3) {
         martCellCounter = 0;
@@ -642,7 +645,7 @@ d3.json("data.json", function (data) {
   }
 
   //DRAWING a circle for a person/Character
-  function drawPersonCircle(area, x, y, color, name, killed, first) {
+  function drawPersonCircle(area, x, y, color, name, killed, first,faction) {
     var killEP;
 
     if (killed != null) {
@@ -652,7 +655,7 @@ d3.json("data.json", function (data) {
     }
     var c = area.append('circle').attr('r', circleRad).attr('cx', x).attr('cy', y)
       .attr('fill', color).attr('id', name + '_' + i).attr('data-killed', killEP)
-      .attr('data-first', first).classed('sortable', true);
+      .attr('data-first', first).attr('data-faction',faction).classed('sortable', true);
 
     //ADD Eventhandlers for the circles events
 
@@ -777,6 +780,24 @@ d3.json("data.json", function (data) {
   function circleMouseOutHandler() {
     toolTip.classed('hidden', true);
   }
+
+  function fillCharInfoBox(personCircle){
+    var person = personCircle._groups[0][0];
+    var id = person.getAttribute('id');
+    var name = id.split('_'[0]);
+    var faction = person.faction;
+    var first = person.first;
+    var killed = person.killed;
+
+
+
+
+
+
+
+  }
+
+
 
   function ensureCirclesAboveLines() {
     //THOUGHT: drawing circles after rellines also had no effect.
@@ -913,14 +934,13 @@ d3.json("data.json", function (data) {
   }
 
 
-  function getRelationsFor(person) {
+  function getRelationsFor(pName) {
 
     var resultList = [];
 
 
     for (var x = 0; x < relations.length; x++) {
-      var pName = person.name;
-      if (relations[x].source === pName) {
+       if (relations[x].source === pName) {
         resultList.push(relations[x]);
       }
     }
@@ -934,11 +954,11 @@ d3.json("data.json", function (data) {
     var srcX = person.xCord;
     var srcY = person.yCord;
 
-    for (var x = 0; x < relations.length; x++) {
-      if (person.name === relations[x].source) {
+    for (var x = 0; x < data.relations.length; x++) {
+      if (person.name === data.relations[x].source) {
 
 
-        var targetName = relations[x].target;
+        var targetName = data.relations[x].target;
         var target = getPerson(targetName);
 
         if (typeof (target) != 'undefined') {
@@ -950,7 +970,7 @@ d3.json("data.json", function (data) {
 
 
           var color = 'black';
-          var relType = relations[x].type;
+          var relType = data.relations[x].type;
 
           if (relType === 'is allied with') {
             color = 'blue';
@@ -978,8 +998,8 @@ d3.json("data.json", function (data) {
             .attr('x2', tarX).attr('y2', tarY).attr('stroke-width', 2).attr('stroke', color)
             .attr('data-src', person.name)
             .attr('data-target', targetName)
-            .attr('data-rel-start', relations[x].start)
-            .attr('data-rel-end', relations[x].end)
+            .attr('data-rel-start', data.relations[x].start)
+            .attr('data-rel-end', data.relations[x].end)
             .style('visibility', 'hidden')
             .on('click', function (d, index) {
 
