@@ -196,6 +196,123 @@ d3.json("data.json", function (data) {
     emptyCharInfoBox();
   });
 
+  // DRAW Legend Relation
+  const legendeWrapper = area1.append('div')
+  .style('height', (30 + 30) + 'px')
+  .style('width', (800 + 30) + 'px')
+  .style('position', 'absolute')
+  .style('left', '425px')
+  .style('top', '620px');
+
+
+  const legendBox = legendeWrapper
+  .append("svg")
+  .attr("width", 870)
+  .attr("height", 60)
+  .style("border", "1px solid black")
+  .style('background-color', 'white')
+  .style('float', 'right');
+
+    //DRAWING Group Legend
+    const legendItems = legendBox.append('g');
+    const legendPadding = 33;
+    const legendX1Pos = 20;
+    const legendX2Pos = 50;
+    const legendYPos = 15;
+    var relations=['is allied with','is child of','is enemy of','is in love with',
+    'is married to','is parent of','is sibling of','killed','was killed by',
+    'was severely injured by'];
+    var relationColor=['blue','aqua','red','pink','darkgoldenrod','darkcyan',
+    'forestgreen','darkviolet','darkslateblue','lightsalmon'];
+    drawLegend();
+    
+  function drawLegend() {
+   // for (var i=0;i<relations.length;++i){
+     var x1 = legendX1Pos;
+     var linePadding = 120;
+     var lineLength = 30;
+     var y = legendYPos;
+     
+
+    for (var i=0;i<relations.length;i++){
+      var newX = x1+linePadding*i;
+      var newY = y;
+      if(newX>=800){
+        newX -=840;
+        newY = y + 30;
+
+      }
+
+      
+
+      legendItems.append('line')
+      .attr('stroke',relationColor[i])
+      .attr('x1',newX)
+      .attr('x2',newX+lineLength)
+      .attr('y1',newY)
+      .attr('y2',newY)
+      .attr('stroke-width',3);
+
+      legendItems.append('text')
+      .attr('x',newX+legendPadding)
+      .attr('y',newY+4)
+      .attr("font-family", "sans-serif")
+      .attr("font-size", "14px")
+      .style("text-anchor", "start")
+      .text(relations[i]);
+
+
+    }
+
+
+
+    /*legendItems.selectAll('line').data(relations).enter()
+    .append('line').attr('stroke',function(d,i)
+    {
+      return relationColor[i];
+    }).attr('x1',function(d,i){
+      newX = x1+linePadding*i;
+      if(newX>=800)
+      {
+        newX=x1;
+        y = y+ 30;
+
+      }   
+      return newX;
+    }).attr('x2',function(d,i){
+      newX = x1+linePadding*i;
+      if(newX>=800)
+      {
+        newX=x1;
+        y = y+ 30;
+
+      }   
+      return newX+lineLength;
+    }).attr('y1',y)
+    .attr('y2',y)
+    .attr('stroke-width',3);*/
+
+
+
+     /* legendItems.append('line').attr('x1', legendX1Pos).attr('y1', legendYPos).attr('x2', legendX2Pos).attr('y2',legendYPos)
+        .attr('stroke-width', 3).attr('stroke', relationColor[0]);
+
+      legendItems.append('text').text(relations[0]).attr('x', legendX1Pos+legendPadding)
+      .attr('y', legendYPos+5).attr("font-family", "sans-serif")
+      .attr("font-size", "14px")
+      .style("text-anchor", "middle");
+
+      legendItems.append('line').attr('x1', 2*(legendX1Pos+legendX2Pos)).attr('y1', legendYPos).attr('x2', 2*(legendX1Pos+legendX2Pos)+30).attr('y2',legendYPos)
+        .attr('stroke-width', 3).attr('stroke', relationColor[1]);
+
+      legendItems.append('text').text(relations[1]).attr('x', (legendX1Pos*10)+2)
+      .attr('y', legendYPos+5).attr("font-family", "sans-serif")
+      .attr("font-size", "14px")
+      .style("text-anchor", "middle");*/
+
+    //}
+  }
+
   //Add event handler for slider
   slider.on('change', function (d, index) {
 
@@ -1173,6 +1290,7 @@ d3.json("data.json", function (data) {
 
   }
 
+
   function showRelationsFor(name) {
     for (var x = 0; x < relLineList.length; x++) {
 
@@ -1304,8 +1422,10 @@ d3.json("data.json", function (data) {
         viewer = viewerDataPs[i]._groups[0][0].getAttribute('data-viewers') * Math.pow(10, 6);
       }
 
+     
     }
-    return viewer;
+
+     return Number((viewer).toFixed(2));
 
   }
 
