@@ -67,7 +67,7 @@ var viewersLabel = epInfoBox.append('text').text('2220000').attr("font-family", 
 
 
 //Create character info box in area 3
-const charInfoBoxHeight = 200, charInfoBoxWidth = 900;
+const charInfoBoxHeight = 200, charInfoBoxWidth = 950;
 
 const charInfoBoxWrapper = area3.append('div')
   .style('overflow-y', 'auto')
@@ -90,12 +90,12 @@ const charInfoBoxPlaceholder = charInfoBox.append('text')
 .attr("font-size", "24px").style('fill', 'black').style("text-anchor", "middle")
 .attr('x', '50%').attr('y', '50%')
 
-
+const charInfoBoxX = 20;
 const charInfoBoxNameLabel = charInfoBox.append('text')
 .attr("font-family", "sans-serif")
 .attr("font-size", "20px").style('fill', 'black')
 .style("text-anchor", "start")
-.attr('x', '30%').attr('y', '35px')
+.attr('x', charInfoBoxX+'%').attr('y', '35px')
 .text('Name:')
 .classed('hidden',true);
 
@@ -103,7 +103,7 @@ const charInfoBoxFactionLabel = charInfoBox.append('text')
 .attr("font-family", "sans-serif")
 .attr("font-size", "20px").style('fill', 'black')
 .style("text-anchor", "start")
-.attr('x', '30%').attr('y', '60px')
+.attr('x', charInfoBoxX+'%').attr('y', '60px')
 .text('Faction:')
 .classed('hidden',true);
 
@@ -111,7 +111,7 @@ const charInfoBoxStartLabel = charInfoBox.append('text')
 .attr("font-family", "sans-serif")
 .attr("font-size", "20px").style('fill', 'black')
 .style("text-anchor", "start")
-.attr('x', '30%').attr('y', '85px')
+.attr('x', charInfoBoxX+'%').attr('y', '85px')
 .text('First appearance:')
 .classed('hidden',true);
 
@@ -119,7 +119,7 @@ const charInfoBoxKilledLabel = charInfoBox.append('text')
 .attr("font-family", "sans-serif")
 .attr("font-size", "20px").style('fill', 'black')
 .style("text-anchor", "start")
-.attr('x', '30%').attr('y', '110px')
+.attr('x', charInfoBoxX+'%').attr('y', '110px')
 .text('Killed:')
 .classed('hidden',true);
 
@@ -127,7 +127,7 @@ const charInfoBoxRelationsLabel = charInfoBox.append('text')
 .attr("font-family", "sans-serif")
 .attr("font-size", "20px").style('fill', 'black')
 .style("text-anchor", "start")
-.attr('x', '30%').attr('y', '110px')
+.attr('x', charInfoBoxX+'%').attr('y', '140px')
 .text('Relations:')
 .classed('hidden',true);
 
@@ -189,6 +189,11 @@ d3.json("data.json", function (data) {
   area1.append('button').text('draw all relations').on('click', function (d, i) {
     showRelations();
 
+  });
+  area1.append('button').text('clear character box')
+  .style('margin-left','10px')
+  .on('click',function(d,i){
+    emptyCharInfoBox();
   });
 
   //Add event handler for slider
@@ -811,6 +816,16 @@ d3.json("data.json", function (data) {
       }
     }
 
+    if(typeof(circle)=='undefined'){
+      for(var i =0;i<charCircles.length;i++){
+        if(charCircles[i]._groups[0][0].getAttribute('id').split('_')[0]===id.split('_')[0]){
+          circle = charCircles[i]._groups[0][0];
+        }
+      }
+    }
+    fillCharInfoBox(circle);
+
+
 
   }
 
@@ -833,19 +848,37 @@ d3.json("data.json", function (data) {
 
   function fillCharInfoBox(personCircle){
     //Define text positioning of relations
-    var startY = 135; //in px
-    var startX = 30; //in %
+    var startY = 165; //in px
+    var startX = charInfoBoxX; //in %
     var ySpace = 25;
 
     //Get person data
-    var person = personCircle._groups[0][0];
+    var person = personCircle;
     var id = person.getAttribute('id');
-    var name = id.split('_'[0]);
-    var faction = person.faction;
-    var first = person.first;
-    var killed = person.killed;
+    var name = id.split('_')[0];
+    var faction = person.getAttribute('data-faction');
+    var first = person.getAttribute('data-first');
+    var killed = person.getAttribute('data-killed');
     var relations = getRelationsFor(name);
 
+    //Determine charinfobox height
+    var newHeight = charInfoBoxHeight;
+    var additionalHeight = 0;
+    var amountOfRels = relations.length;
+    //Subtract available space in default size;
+    amountOfRels -=2;
+
+    if(amountOfRels>=0){
+      additionalHeight = ySpace*amountOfRels;
+    }
+    newHeight+=additionalHeight;
+    charInfoBox.style('height',newHeight+'px');
+
+
+
+
+
+    //Set and show labels
     charInfoBoxPlaceholder.classed('hidden',true);
 
     charInfoBoxNameLabel.classed('hidden',false);
@@ -860,9 +893,11 @@ d3.json("data.json", function (data) {
     charInfoBoxKilledLabel.classed('hidden',false);
     charInfoBoxKilledLabel.text('Killed: '+killed);
 
+    charInfoBoxRelationsLabel.classed('hidden',false);
 
+    //Write relations down.
     charInfoBoxRelationsList.selectAll('text')
-    .data(relations)
+    .data([])
     .exit()
     .remove();
 
@@ -877,17 +912,46 @@ d3.json("data.json", function (data) {
       return (startY + ySpace*i)+'px';
     })
     .text(function(d,i){
-      return d.source +' '+d.type+' '+d.target;
+      var relEnd ='';
+      if(d.getAttribute('data-rel-end')!=='NA'){
+        relEnd = '\t until \t'+d.getAttribute('data-rel-end');
+      }
+      var temporalConnector = '\t since \t';
+
+      if(d.getAttribute('data-rel-type')==='killed' || d.getAttribute('data-rel-type')==='was killed by'){
+        temporalConnector = '\t in \t';
+      }
+
+
+      return d.getAttribute('data-src') 
+      +'\t'+d.getAttribute('data-rel-type')+'\t'
+      +d.getAttribute('data-target')
+      +temporalConnector
+      +d.getAttribute('data-rel-start')
+      +relEnd;
     });
-    
 
 
 
+  }
 
 
+  function emptyCharInfoBox(){
+    //Resize box to original size
+    charInfoBox.style('height',charInfoBoxHeight+'px');
 
+    //cleanup all relations
+    charInfoBoxRelationsList.selectAll('text').data([]).exit().remove();
 
+    //Hide all relations
+    charInfoBoxNameLabel.classed('hidden',true);
+    charInfoBoxFactionLabel.classed('hidden',true);
+    charInfoBoxStartLabel.classed('hidden',true);
+    charInfoBoxKilledLabel.classed('hidden',true);
+    charInfoBoxRelationsLabel.classed('hidden',true);
 
+    //put placeholder back in the box
+    charInfoBoxPlaceholder.classed('hidden',false);
 
   }
 
@@ -1083,12 +1147,15 @@ d3.json("data.json", function (data) {
             color = 'lightsalmon';
           }
 
+          var end =data.relations[x].end;
+          if(end==null)end='NA';
           var relLine = svg.append('line').attr('x1', srcX).attr('y1', srcY).classed('sortable', true)
             .attr('x2', tarX).attr('y2', tarY).attr('stroke-width', 2).attr('stroke', color)
             .attr('data-src', person.name)
             .attr('data-target', targetName)
             .attr('data-rel-start', data.relations[x].start)
-            .attr('data-rel-end', data.relations[x].end)
+            .attr('data-rel-end', end)
+            .attr('data-rel-type',data.relations[x].type)
             .style('visibility', 'hidden')
             .on('click', function (d, index) {
 
