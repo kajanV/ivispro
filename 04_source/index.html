@@ -1,23 +1,69 @@
 <!doctype html>
 <html>
+
 <head>
-  <meta charset="utf-8"/>
+  <meta charset="utf-8" />
   <link rel="stylesheet" type="text/css" href="myslider.css">
   <link rel="stylesheet" type="text/css" href="tooltip.css">
   <link rel="stylesheet" type="text/css" href="gotMap.css">
   <style>
-    
   </style>
 </head>
+
 <body>
-<!-- put your stuff here -->
+  <!-- put your stuff here -->
 
-<script src='lib/d3.v4.js'></script>
-<script src='lib/lodash.js'></script>
+  <script src='lib/d3.v4.js'></script>
+  <script src='lib/lodash.js'></script>
 
-<script src='gotMap.js'></script>
+  <script src='gotMap.js'></script>
+  <div>
+    <h1>
+      This is a web application to analyse different data of the series Game of Thrones per episode. The data goes up to and including
+      the 5th season.
+    </h1>
+
+    <h2>The features which can be used are the following:</h2>
+    <ul>
+      <li>Show information about characters</li>
+      <li>Show relationships between different characters</li>
+      <li>Show number of deaths per episode</li>
+      <li>Show number of TV viewers per episode</li>
+    </ul>
 
 
+    <h2>Show information about characters</h2>
+    <ul>
+      <li>Hover over one of the circles to display a character's name.</li>
+      <li>Clicking on a circle displays all relation information about a character in the big info box</li>
+    </ul>
 
+
+    <h2>Show the relationship between different characters.</h2>
+    <ul>
+      <li>
+        Clicking on one of the circles toggles it's relaitonships on and off. If you don't see any relations, it could be that character
+        hasn't appeared in the show yet or really has no active relationships in that episode. Furthermore, if you still
+        see relationsship lines on a circle you just switched off, it means the other person this relation belongs to is
+        still acitve.
+      </li>
+
+      <li>It is also possible to display the relationship of all characters to an episode by clicking on the "draw all relations"
+        button.
+      </li>
+      <li>In order to delete all drawn relationship you can click on the button "clear relations".
+      </li>
+      <li>Using the slider you can control the current episode determining which relations are displayed. You can see the current
+        episode in the small info box.</li>
+    </ul>
+
+    <h2>Number of deaths per episode</h2>
+    <p>While changing the episode with the slider, the number of deaths for this episode will be displayed in the info box.</p>
+
+    <h2>Number of TV-Viewers per episode</h2>
+    <p>While changing the episode with the slider, the number of TV-Viewers(US) at the first broadcast for this episode will
+      be displayed in the info box.</p>
+  </div>
 </body>
+
 </html>
