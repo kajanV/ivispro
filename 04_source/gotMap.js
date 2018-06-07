@@ -85,51 +85,51 @@ const charInfoBox = charInfoBoxWrapper
 
 
 const charInfoBoxPlaceholder = charInfoBox.append('text')
-.text('click on one of the characters to find out more about them.')
-.attr("font-family", "sans-serif")
-.attr("font-size", "24px").style('fill', 'black').style("text-anchor", "middle")
-.attr('x', '50%').attr('y', '50%')
+  .text('click on one of the characters to find out more about them.')
+  .attr("font-family", "sans-serif")
+  .attr("font-size", "24px").style('fill', 'black').style("text-anchor", "middle")
+  .attr('x', '50%').attr('y', '50%')
 
 const charInfoBoxX = 20;
 const charInfoBoxNameLabel = charInfoBox.append('text')
-.attr("font-family", "sans-serif")
-.attr("font-size", "20px").style('fill', 'black')
-.style("text-anchor", "start")
-.attr('x', charInfoBoxX+'%').attr('y', '35px')
-.text('Name:')
-.classed('hidden',true);
+  .attr("font-family", "sans-serif")
+  .attr("font-size", "20px").style('fill', 'black')
+  .style("text-anchor", "start")
+  .attr('x', charInfoBoxX + '%').attr('y', '35px')
+  .text('Name:')
+  .classed('hidden', true);
 
 const charInfoBoxFactionLabel = charInfoBox.append('text')
-.attr("font-family", "sans-serif")
-.attr("font-size", "20px").style('fill', 'black')
-.style("text-anchor", "start")
-.attr('x', charInfoBoxX+'%').attr('y', '60px')
-.text('Faction:')
-.classed('hidden',true);
+  .attr("font-family", "sans-serif")
+  .attr("font-size", "20px").style('fill', 'black')
+  .style("text-anchor", "start")
+  .attr('x', charInfoBoxX + '%').attr('y', '60px')
+  .text('Faction:')
+  .classed('hidden', true);
 
 const charInfoBoxStartLabel = charInfoBox.append('text')
-.attr("font-family", "sans-serif")
-.attr("font-size", "20px").style('fill', 'black')
-.style("text-anchor", "start")
-.attr('x', charInfoBoxX+'%').attr('y', '85px')
-.text('First appearance:')
-.classed('hidden',true);
+  .attr("font-family", "sans-serif")
+  .attr("font-size", "20px").style('fill', 'black')
+  .style("text-anchor", "start")
+  .attr('x', charInfoBoxX + '%').attr('y', '85px')
+  .text('First appearance:')
+  .classed('hidden', true);
 
 const charInfoBoxKilledLabel = charInfoBox.append('text')
-.attr("font-family", "sans-serif")
-.attr("font-size", "20px").style('fill', 'black')
-.style("text-anchor", "start")
-.attr('x', charInfoBoxX+'%').attr('y', '110px')
-.text('Killed:')
-.classed('hidden',true);
+  .attr("font-family", "sans-serif")
+  .attr("font-size", "20px").style('fill', 'black')
+  .style("text-anchor", "start")
+  .attr('x', charInfoBoxX + '%').attr('y', '110px')
+  .text('Killed:')
+  .classed('hidden', true);
 
 const charInfoBoxRelationsLabel = charInfoBox.append('text')
-.attr("font-family", "sans-serif")
-.attr("font-size", "20px").style('fill', 'black')
-.style("text-anchor", "start")
-.attr('x', charInfoBoxX+'%').attr('y', '140px')
-.text('Relations:')
-.classed('hidden',true);
+  .attr("font-family", "sans-serif")
+  .attr("font-size", "20px").style('fill', 'black')
+  .style("text-anchor", "start")
+  .attr('x', charInfoBoxX + '%').attr('y', '140px')
+  .text('Relations:')
+  .classed('hidden', true);
 
 const charInfoBoxRelationsList = charInfoBox.append('g');
 
@@ -191,126 +191,81 @@ d3.json("data.json", function (data) {
 
   });
   area1.append('button').text('clear character box')
-  .style('margin-left','10px')
-  .on('click',function(d,i){
-    emptyCharInfoBox();
-  });
+    .style('margin-left', '10px')
+    .on('click', function (d, i) {
+      emptyCharInfoBox();
+    });
 
   // DRAW Legend Relation
   const legendeWrapper = area1.append('div')
-  .style('height', (30 + 30) + 'px')
-  .style('width', (800 + 30) + 'px')
-  .style('position', 'absolute')
-  .style('left', '425px')
-  .style('top', '620px');
+    .style('height', (30 + 30) + 'px')
+    .style('width', (800 + 30) + 'px')
+    .style('position', 'absolute')
+    .style('left', '425px')
+    .style('top', '620px');
 
 
   const legendBox = legendeWrapper
-  .append("svg")
-  .attr("width", 870)
-  .attr("height", 60)
-  .style("border", "1px solid black")
-  .style('background-color', 'white')
-  .style('float', 'right');
+    .append("svg")
+    .attr("width", 870)
+    .attr("height", 60)
+    .style("border", "1px solid black")
+    .style('background-color', 'white')
+    .style('float', 'right');
 
-    //DRAWING Group Legend
-    const legendItems = legendBox.append('g');
-    const legendPadding = 33;
-    const legendX1Pos = 20;
-    const legendX2Pos = 50;
-    const legendYPos = 15;
-    var relations=['is allied with','is child of','is enemy of','is in love with',
-    'is married to','is parent of','is sibling of','killed','was killed by',
+  //DRAWING Group Legend
+  const legendItems = legendBox.append('g');
+  const legendPadding = 33;
+  const legendX1Pos = 20;
+  const legendX2Pos = 50;
+  const legendYPos = 15;
+  var relations = ['is allied with', 'is child of', 'is enemy of', 'is in love with',
+    'is married to', 'is parent of', 'is sibling of', 'killed', 'was killed by',
     'was severely injured by'];
-    var relationColor=['blue','aqua','red','pink','darkgoldenrod','darkcyan',
-    'forestgreen','darkviolet','darkslateblue','lightsalmon'];
-    drawLegend();
-    
-  function drawLegend() {
-   // for (var i=0;i<relations.length;++i){
-     var x1 = legendX1Pos;
-     var linePadding = 120;
-     var lineLength = 30;
-     var y = legendYPos;
-     
+  var relationColor = ['blue', 'aqua', 'red', 'pink', 'darkgoldenrod', 'darkcyan',
+    'forestgreen', 'darkviolet', 'darkslateblue', 'lightsalmon'];
+  drawLegend();
 
-    for (var i=0;i<relations.length;i++){
-      var newX = x1+linePadding*i;
+  function drawLegend() {
+    // for (var i=0;i<relations.length;++i){
+    var x1 = legendX1Pos;
+    var linePadding = 120;
+    var lineLength = 30;
+    var y = legendYPos;
+
+
+    for (var i = 0; i < relations.length; i++) {
+      var newX = x1 + linePadding * i;
       var newY = y;
-      if(newX>=800){
-        newX -=840;
+      if (newX >= 800) {
+        newX -= 840;
         newY = y + 30;
 
       }
 
-      
+
 
       legendItems.append('line')
-      .attr('stroke',relationColor[i])
-      .attr('x1',newX)
-      .attr('x2',newX+lineLength)
-      .attr('y1',newY)
-      .attr('y2',newY)
-      .attr('stroke-width',3);
+        .attr('stroke', relationColor[i])
+        .attr('x1', newX)
+        .attr('x2', newX + lineLength)
+        .attr('y1', newY)
+        .attr('y2', newY)
+        .attr('stroke-width', 3);
 
       legendItems.append('text')
-      .attr('x',newX+legendPadding)
-      .attr('y',newY+4)
-      .attr("font-family", "sans-serif")
-      .attr("font-size", "14px")
-      .style("text-anchor", "start")
-      .text(relations[i]);
+        .attr('x', newX + legendPadding)
+        .attr('y', newY + 4)
+        .attr("font-family", "sans-serif")
+        .attr("font-size", "14px")
+        .style("text-anchor", "start")
+        .text(relations[i]);
 
 
     }
 
 
 
-    /*legendItems.selectAll('line').data(relations).enter()
-    .append('line').attr('stroke',function(d,i)
-    {
-      return relationColor[i];
-    }).attr('x1',function(d,i){
-      newX = x1+linePadding*i;
-      if(newX>=800)
-      {
-        newX=x1;
-        y = y+ 30;
-
-      }   
-      return newX;
-    }).attr('x2',function(d,i){
-      newX = x1+linePadding*i;
-      if(newX>=800)
-      {
-        newX=x1;
-        y = y+ 30;
-
-      }   
-      return newX+lineLength;
-    }).attr('y1',y)
-    .attr('y2',y)
-    .attr('stroke-width',3);*/
-
-
-
-     /* legendItems.append('line').attr('x1', legendX1Pos).attr('y1', legendYPos).attr('x2', legendX2Pos).attr('y2',legendYPos)
-        .attr('stroke-width', 3).attr('stroke', relationColor[0]);
-
-      legendItems.append('text').text(relations[0]).attr('x', legendX1Pos+legendPadding)
-      .attr('y', legendYPos+5).attr("font-family", "sans-serif")
-      .attr("font-size", "14px")
-      .style("text-anchor", "middle");
-
-      legendItems.append('line').attr('x1', 2*(legendX1Pos+legendX2Pos)).attr('y1', legendYPos).attr('x2', 2*(legendX1Pos+legendX2Pos)+30).attr('y2',legendYPos)
-        .attr('stroke-width', 3).attr('stroke', relationColor[1]);
-
-      legendItems.append('text').text(relations[1]).attr('x', (legendX1Pos*10)+2)
-      .attr('y', legendYPos+5).attr("font-family", "sans-serif")
-      .attr("font-size", "14px")
-      .style("text-anchor", "middle");*/
-
-    //}
   }
 
   //Add event handler for slider
@@ -500,7 +455,7 @@ d3.json("data.json", function (data) {
     processTyrell(person);
     processLannister(person);
     processMartell(person);
-    
+
   }
 
   //Predraw all relations
@@ -637,7 +592,7 @@ d3.json("data.json", function (data) {
       var persY = getStarkY();
       data.characters[i].xCord = persX;
       data.characters[i].yCord = persY;
-      drawPersonCircle(starkArea, persX, persY, starkColor, person.name, person.killed, person.first,person.faction);
+      drawPersonCircle(starkArea, persX, persY, starkColor, person.name, person.killed, person.first, person.faction);
 
       if (starkCellCounter == 6) {
         starkCellCounter = 0;
@@ -654,7 +609,7 @@ d3.json("data.json", function (data) {
       var persY = getNWY();
       data.characters[i].xCord = persX;
       data.characters[i].yCord = persY;
-      drawPersonCircle(nwArea, persX, persY, nwColor, person.name, person.killed, person.first,person.faction);
+      drawPersonCircle(nwArea, persX, persY, nwColor, person.name, person.killed, person.first, person.faction);
 
       if (nwCellCounter == 3) {
         nwCellCounter = 0;
@@ -671,7 +626,7 @@ d3.json("data.json", function (data) {
       var persY = getTargY();
       data.characters[i].xCord = persX;
       data.characters[i].yCord = persY;
-      drawPersonCircle(targArea, persX, persY, targColor, person.name, person.killed, person.first,person.faction);
+      drawPersonCircle(targArea, persX, persY, targColor, person.name, person.killed, person.first, person.faction);
 
       if (targCellCounter == 4) {
         targCellCounter = 0;
@@ -688,7 +643,7 @@ d3.json("data.json", function (data) {
       var persY = getFFY();
       data.characters[i].xCord = persX;
       data.characters[i].yCord = persY;
-      drawPersonCircle(ffArea, persX, persY, ffColor, person.name, person.killed, person.first,person.faction);
+      drawPersonCircle(ffArea, persX, persY, ffColor, person.name, person.killed, person.first, person.faction);
 
       if (ffCellCounter == 3) {
         ffCellCounter = 0;
@@ -705,7 +660,7 @@ d3.json("data.json", function (data) {
       var persY = getGJY();
       data.characters[i].xCord = persX;
       data.characters[i].yCord = persY;
-      drawPersonCircle(gjArea, persX, persY, gjColor, person.name, person.killed, person.first,person.faction);
+      drawPersonCircle(gjArea, persX, persY, gjColor, person.name, person.killed, person.first, person.faction);
 
       if (gjCellCounter == 3) {
         gjCellCounter = 0;
@@ -722,7 +677,7 @@ d3.json("data.json", function (data) {
       var persY = getBaraY();
       data.characters[i].xCord = persX;
       data.characters[i].yCord = persY;
-      drawPersonCircle(baraArea, persX, persY, baraColor, person.name, person.killed, person.first,person.faction);
+      drawPersonCircle(baraArea, persX, persY, baraColor, person.name, person.killed, person.first, person.faction);
 
       if (baraCellCounter == 4) {
         baraCellCounter = 0;
@@ -739,7 +694,7 @@ d3.json("data.json", function (data) {
       var persY = getOthersY();
       data.characters[i].xCord = persX;
       data.characters[i].yCord = persY;
-      drawPersonCircle(othersArea, persX, persY, othersColor, person.name, person.killed, person.first,person.faction);
+      drawPersonCircle(othersArea, persX, persY, othersColor, person.name, person.killed, person.first, person.faction);
 
       if (othersCellCounter == 12) {
         othersCellCounter = 0;
@@ -756,7 +711,7 @@ d3.json("data.json", function (data) {
       var persY = getLessY();
       data.characters[i].xCord = persX;
       data.characters[i].yCord = persY;
-      drawPersonCircle(lessArea, persX, persY, lessColor, person.name, person.killed, person.first,person.faction);
+      drawPersonCircle(lessArea, persX, persY, lessColor, person.name, person.killed, person.first, person.faction);
 
       if (lessCellCounter == 2) {
         lessCellCounter = 0;
@@ -773,7 +728,7 @@ d3.json("data.json", function (data) {
       var persY = getTyreY();
       data.characters[i].xCord = persX;
       data.characters[i].yCord = persY;
-      drawPersonCircle(tyreArea, persX, persY, tyreColor, person.name, person.killed, person.first,person.faction);
+      drawPersonCircle(tyreArea, persX, persY, tyreColor, person.name, person.killed, person.first, person.faction);
 
       if (tyreCellCounter == 2) {
         tyreCellCounter = 0;
@@ -790,7 +745,7 @@ d3.json("data.json", function (data) {
       var persY = getLannY();
       data.characters[i].xCord = persX;
       data.characters[i].yCord = persY;
-      drawPersonCircle(lannArea, persX, persY, lannColor, person.name, person.killed, person.first,person.faction);
+      drawPersonCircle(lannArea, persX, persY, lannColor, person.name, person.killed, person.first, person.faction);
 
       if (lannCellCounter == 4) {
         lannCellCounter = 0;
@@ -807,7 +762,7 @@ d3.json("data.json", function (data) {
       var persY = getMartY();
       data.characters[i].xCord = persX;
       data.characters[i].yCord = persY;
-      drawPersonCircle(martArea, persX, persY, martColor, person.name, person.killed, person.first,person.faction);
+      drawPersonCircle(martArea, persX, persY, martColor, person.name, person.killed, person.first, person.faction);
 
       if (martCellCounter == 3) {
         martCellCounter = 0;
@@ -817,7 +772,7 @@ d3.json("data.json", function (data) {
   }
 
   //DRAWING a circle for a person/Character
-  function drawPersonCircle(area, x, y, color, name, killed, first,faction) {
+  function drawPersonCircle(area, x, y, color, name, killed, first, faction) {
     var killEP;
 
     if (killed != null) {
@@ -827,7 +782,7 @@ d3.json("data.json", function (data) {
     }
     var c = area.append('circle').attr('r', circleRad).attr('cx', x).attr('cy', y)
       .attr('fill', color).attr('id', name + '_' + i).attr('data-killed', killEP)
-      .attr('data-first', first).attr('data-faction',faction).classed('sortable', true);
+      .attr('data-first', first).attr('data-faction', faction).classed('sortable', true);
 
     //ADD Eventhandlers for the circles events
 
@@ -933,9 +888,9 @@ d3.json("data.json", function (data) {
       }
     }
 
-    if(typeof(circle)=='undefined'){
-      for(var i =0;i<charCircles.length;i++){
-        if(charCircles[i]._groups[0][0].getAttribute('id').split('_')[0]===id.split('_')[0]){
+    if (typeof (circle) == 'undefined') {
+      for (var i = 0; i < charCircles.length; i++) {
+        if (charCircles[i]._groups[0][0].getAttribute('id').split('_')[0] === id.split('_')[0]) {
           circle = charCircles[i]._groups[0][0];
         }
       }
@@ -963,7 +918,7 @@ d3.json("data.json", function (data) {
     toolTip.classed('hidden', true);
   }
 
-  function fillCharInfoBox(personCircle){
+  function fillCharInfoBox(personCircle) {
     //Define text positioning of relations
     var startY = 165; //in px
     var startX = charInfoBoxX; //in %
@@ -983,99 +938,98 @@ d3.json("data.json", function (data) {
     var additionalHeight = 0;
     var amountOfRels = relations.length;
     //Subtract available space in default size;
-    amountOfRels -=2;
+    amountOfRels -= 2;
 
-    if(amountOfRels>=0){
-      additionalHeight = ySpace*amountOfRels;
+    if (amountOfRels >= 0) {
+      additionalHeight = ySpace * amountOfRels;
     }
-    newHeight+=additionalHeight;
-    charInfoBox.style('height',newHeight+'px');
+    newHeight += additionalHeight;
+    charInfoBox.style('height', newHeight + 'px');
 
 
 
 
 
     //Set and show labels
-    charInfoBoxPlaceholder.classed('hidden',true);
+    charInfoBoxPlaceholder.classed('hidden', true);
 
-    charInfoBoxNameLabel.classed('hidden',false);
-    charInfoBoxNameLabel.text('Name: '+name);
+    charInfoBoxNameLabel.classed('hidden', false);
+    charInfoBoxNameLabel.text('Name: ' + name);
 
-    charInfoBoxFactionLabel.classed('hidden',false);
-    charInfoBoxFactionLabel.text('Faction: '+faction);
+    charInfoBoxFactionLabel.classed('hidden', false);
+    charInfoBoxFactionLabel.text('Faction: ' + faction);
 
-    charInfoBoxStartLabel.classed('hidden',false);
-    charInfoBoxStartLabel.text('First appearance: '+first);
+    charInfoBoxStartLabel.classed('hidden', false);
+    charInfoBoxStartLabel.text('First appearance: ' + first);
 
-    charInfoBoxKilledLabel.classed('hidden',false);
-    charInfoBoxKilledLabel.text('Killed: '+killed);
+    charInfoBoxKilledLabel.classed('hidden', false);
+    charInfoBoxKilledLabel.text('Killed: ' + killed);
 
-    charInfoBoxRelationsLabel.classed('hidden',false);
+    charInfoBoxRelationsLabel.classed('hidden', false);
 
     //Write relations down.
     charInfoBoxRelationsList.selectAll('text')
-    .data([])
-    .exit()
-    .remove();
+      .data([])
+      .exit()
+      .remove();
 
     charInfoBoxRelationsList.selectAll('text')
-    .data(relations)
-    .enter()
-    .append('text')
-    .attr("font-family", "sans-serif")
-    .attr("font-size", "20px").style('fill', 'black')
-    .style("text-anchor", "start")
-    .attr('x', startX+'%').attr('y', function(d,i){
-      return (startY + ySpace*i)+'px';
-    })
-    .text(function(d,i){
-      var relEnd ='';
-      if(d.getAttribute('data-rel-end')!=='NA'){
-        relEnd = '\t until \t'+d.getAttribute('data-rel-end');
-      }
-      var temporalConnector = '\t since \t';
+      .data(relations)
+      .enter()
+      .append('text')
+      .attr("font-family", "sans-serif")
+      .attr("font-size", "20px").style('fill', 'black')
+      .style("text-anchor", "start")
+      .attr('x', startX + '%').attr('y', function (d, i) {
+        return (startY + ySpace * i) + 'px';
+      })
+      .text(function (d, i) {
+        var relEnd = '';
+        if (d.getAttribute('data-rel-end') !== 'NA') {
+          relEnd = '\t until \t' + d.getAttribute('data-rel-end');
+        }
+        var temporalConnector = '\t since \t';
 
-      if(d.getAttribute('data-rel-type')==='killed' || d.getAttribute('data-rel-type')==='was killed by'){
-        temporalConnector = '\t in \t';
-      }
+        if (d.getAttribute('data-rel-type') === 'killed' || d.getAttribute('data-rel-type') === 'was killed by') {
+          temporalConnector = '\t in \t';
+        }
 
 
-      return d.getAttribute('data-src') 
-      +'\t'+d.getAttribute('data-rel-type')+'\t'
-      +d.getAttribute('data-target')
-      +temporalConnector
-      +d.getAttribute('data-rel-start')
-      +relEnd;
-    });
+        return d.getAttribute('data-src')
+          + '\t' + d.getAttribute('data-rel-type') + '\t'
+          + d.getAttribute('data-target')
+          + temporalConnector
+          + d.getAttribute('data-rel-start')
+          + relEnd;
+      });
 
 
 
   }
 
 
-  function emptyCharInfoBox(){
+  function emptyCharInfoBox() {
     //Resize box to original size
-    charInfoBox.style('height',charInfoBoxHeight+'px');
+    charInfoBox.style('height', charInfoBoxHeight + 'px');
 
     //cleanup all relations
     charInfoBoxRelationsList.selectAll('text').data([]).exit().remove();
 
     //Hide all relations
-    charInfoBoxNameLabel.classed('hidden',true);
-    charInfoBoxFactionLabel.classed('hidden',true);
-    charInfoBoxStartLabel.classed('hidden',true);
-    charInfoBoxKilledLabel.classed('hidden',true);
-    charInfoBoxRelationsLabel.classed('hidden',true);
+    charInfoBoxNameLabel.classed('hidden', true);
+    charInfoBoxFactionLabel.classed('hidden', true);
+    charInfoBoxStartLabel.classed('hidden', true);
+    charInfoBoxKilledLabel.classed('hidden', true);
+    charInfoBoxRelationsLabel.classed('hidden', true);
 
     //put placeholder back in the box
-    charInfoBoxPlaceholder.classed('hidden',false);
+    charInfoBoxPlaceholder.classed('hidden', false);
 
   }
 
 
-
+  //Function not successful yet (experimental)
   function ensureCirclesAboveLines() {
-    //THOUGHT: drawing circles after rellines also had no effect.
     for (var i = 0; i < charCircles.length; i++) {
       charCircles[i].classed('hidden', true);
       charCircles[i].classed('hidden', false);
@@ -1210,7 +1164,7 @@ d3.json("data.json", function (data) {
 
 
     for (var x = 0; x < relLineList.length; x++) {
-       if (relLineList[x]._groups[0][0].getAttribute('data-src') === pName) {
+      if (relLineList[x]._groups[0][0].getAttribute('data-src') === pName) {
         resultList.push(relLineList[x]._groups[0][0]);
       }
     }
@@ -1264,15 +1218,15 @@ d3.json("data.json", function (data) {
             color = 'lightsalmon';
           }
 
-          var end =data.relations[x].end;
-          if(end==null)end='NA';
+          var end = data.relations[x].end;
+          if (end == null) end = 'NA';
           var relLine = svg.append('line').attr('x1', srcX).attr('y1', srcY).classed('sortable', true)
             .attr('x2', tarX).attr('y2', tarY).attr('stroke-width', 2).attr('stroke', color)
             .attr('data-src', person.name)
             .attr('data-target', targetName)
             .attr('data-rel-start', data.relations[x].start)
             .attr('data-rel-end', end)
-            .attr('data-rel-type',data.relations[x].type)
+            .attr('data-rel-type', data.relations[x].type)
             .style('visibility', 'hidden')
             .on('click', function (d, index) {
 
@@ -1383,7 +1337,6 @@ d3.json("data.json", function (data) {
           var currentNr = epStringToNr(currentEP);
 
           if (currentNr <= relEndNr && currentNr >= relStartNr) {
-            // relLineList[y]._groups[0][0].style.visibility = 'visible';
             relLine.style.visibility = 'visible';
           }
 
@@ -1422,10 +1375,10 @@ d3.json("data.json", function (data) {
         viewer = viewerDataPs[i]._groups[0][0].getAttribute('data-viewers') * Math.pow(10, 6);
       }
 
-     
+
     }
 
-     return Number((viewer).toFixed(2));
+    return Number((viewer).toFixed(2));
 
   }
 
