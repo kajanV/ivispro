@@ -1335,6 +1335,7 @@ d3.json("data.json", function (data) {
           var relStartNr = epStringToNr(relStart);
           var relEndNr = epStringToNr(relEnd);
           var currentNr = epStringToNr(currentEP);
+          if(relEndNr==0)relEndNr = Number.MAX_VALUE;
 
           if (currentNr <= relEndNr && currentNr >= relStartNr) {
             relLine.style.visibility = 'visible';
